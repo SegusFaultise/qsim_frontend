@@ -1,49 +1,33 @@
-import { useState, useEffect } from 'react';
-import { MantineProvider } from '@mantine/core';
-import { theme } from './theme';
-import LoginPage from './LoginPage';
-import Dashboard from './Dashboard';
-import ThemeToggle from './ThemeToggle';
+import { useEffect, useState } from "react";
+import { useAuth } from "./context/AuthContext";
+import LoginPage from "./LoginPage";
+import Dashboard from "./Dashboard";
+import ThemeToggle from "./ThemeToggle";
+import { Container } from "react-bootstrap";
 
 function App() {
-  const [token, setToken] = useState(null);
-  const [colorScheme, setColorScheme] = useState(
-    () => localStorage.getItem('color-scheme') || 'light'
+  const { isAuthenticated } = useAuth();
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("qism-theme") || "dark",
   );
 
-  const toggleColorScheme = () => {
-    const newColorScheme = colorScheme === 'dark' ? 'light' : 'dark';
-    setColorScheme(newColorScheme);
-    localStorage.setItem('color-scheme', newColorScheme);
-  };
-
+  // Effect to apply the theme to the root HTML element
   useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-    if (storedToken) {
-      setToken(storedToken);
-    }
-  }, []);
+    document.documentElement.setAttribute("data-bs-theme", theme);
+    localStorage.setItem("qism-theme", theme);
+  }, [theme]);
 
-  const handleLogin = (newToken) => {
-    setToken(newToken);
-    localStorage.setItem('authToken', newToken);
-  };
-
-  const handleLogout = () => {
-    setToken(null);
-    localStorage.removeItem('authToken');
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
-    <MantineProvider theme={theme} forceColorScheme={colorScheme}>
-      <ThemeToggle toggleColorScheme={toggleColorScheme} />
-      
-      {token ? (
-        <Dashboard token={token} onLogout={handleLogout} />
-      ) : (
-        <LoginPage onLogin={handleLogin} />
-      )}
-    </MantineProvider>
+    <>
+      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+      <Container fluid className="p-0">
+        {isAuthenticated ? <Dashboard /> : <LoginPage />}
+      </Container>
+    </>
   );
 }
 

@@ -1,0 +1,361 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(
+        circle,
+        rgba(255, 0, 255, 0.5) 0%,
+        rgba(33, 0, 33, 0.8) 35%,
+        #110011 70%,
+        #000000 100%
+    );
+    background-size: 200% 200%;
+    animation: hypnotic-pulse 25s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes hypnotic-pulse {
+    0% {
+        background-position: 50% 0%;
+    }
+    50% {
+        background-position: 50% 100%;
+    }
+    100% {
+        background-position: 50% 0%;
+    }
+}
+
+/* --- Notation Background Styles --- */
+.notation-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.notation-bg span {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.08);
+    font-family: "Courier New", Courier, monospace;
+    font-weight: bold;
+    user-select: none;
+    animation: float-up 20s linear infinite; /* Slower default speed for contrast */
+    will-change: transform, opacity;
+}
+
+/* --- Keyframe Animations --- */
+@keyframes float-up {
+    from {
+        transform: translateY(120vh) rotate(0deg);
+        opacity: 0;
+    }
+    20%,
+    80% {
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-50vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* UPDATED: Animation for glowing, fast-moving notations */
+@keyframes shoot-up {
+    from {
+        transform: translateY(120vh);
+        opacity: 0;
+    }
+    70% {
+        opacity: 1;
+        color: white;
+        /* Glow effect using text-shadow */
+        text-shadow:
+            0 0 10px magenta,
+            0 0 20px white;
+    }
+    to {
+        transform: translateY(-50vh);
+        opacity: 0;
+        color: white;
+        text-shadow:
+            0 0 10px magenta,
+            0 0 20px white;
+    }
+}
+
+/* This pseudo-element is no longer used for the glow but kept for potential future effects */
+.notation-bg span.shooting-star::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    width: 150%;
+    height: 200px;
+    background: transparent;
+    opacity: 0;
+    animation: streak-fade 4s linear infinite;
+    will-change: opacity;
+}
+
+@keyframes streak-fade {
+    0%,
+    100% {
+        opacity: 0;
+    }
+    50%,
+    70% {
+        opacity: 0;
+    } /* Kept at 0 as text-shadow is now used */
+}
+
+/* --- Applying Animations --- */
+/* Most notations will use the slow float-up animation */
+.notation-bg span:nth-child(1) {
+    left: 10%;
+    font-size: 16px;
+    animation-delay: -2s;
+    animation-duration: 22s;
+}
+.notation-bg span:nth-child(3) {
+    left: 40%;
+    font-size: 18px;
+    animation-delay: -6s;
+    animation-duration: 24s;
+}
+.notation-bg span:nth-child(4) {
+    left: 41%;
+    font-size: 20px;
+    animation-delay: -8s;
+    animation-duration: 28s;
+}
+.notation-bg span:nth-child(5) {
+    left: 59%;
+    font-size: 20px;
+    animation-delay: -10s;
+    animation-duration: 21s;
+}
+.notation-bg span:nth-child(7) {
+    left: 70%;
+    font-size: 24px;
+    animation-delay: -12s;
+    animation-duration: 26s;
+}
+.notation-bg span:nth-child(8) {
+    left: 25%;
+    font-size: 16px;
+    animation-delay: -14s;
+    animation-duration: 23s;
+}
+.notation-bg span:nth-child(9) {
+    left: 15%;
+    font-size: 22px;
+    animation-delay: -16s;
+    animation-duration: 29s;
+}
+.notation-bg span:nth-child(10) {
+    left: 85%;
+    font-size: 22px;
+    animation-delay: -18s;
+    animation-duration: 20s;
+}
+.notation-bg span:nth-child(11) {
+    left: 5%;
+    font-size: 26px;
+    animation-delay: -20s;
+    animation-duration: 27s;
+}
+.notation-bg span:nth-child(13) {
+    left: 33%;
+    font-size: 16px;
+    animation-delay: -22s;
+    animation-duration: 25s;
+}
+.notation-bg span:nth-child(15) {
+    left: 20%;
+    font-size: 24px;
+    animation-delay: -24s;
+    animation-duration: 29s;
+}
+.notation-bg span:nth-child(16) {
+    left: 80%;
+    font-size: 24px;
+    animation-delay: -26s;
+    animation-duration: 21s;
+}
+.notation-bg span:nth-child(17) {
+    left: 55%;
+    font-size: 18px;
+    animation-delay: -28s;
+    animation-duration: 26s;
+}
+.notation-bg span:nth-child(19) {
+    left: 75%;
+    font-size: 16px;
+    animation-delay: -30s;
+    animation-duration: 27s;
+}
+.notation-bg span:nth-child(20) {
+    left: 25%;
+    font-size: 20px;
+    animation-delay: -32s;
+    animation-duration: 25s;
+}
+.notation-bg span:nth-child(22) {
+    left: 30%;
+    font-size: 22px;
+    animation-delay: -34s;
+    animation-duration: 32s;
+}
+.notation-bg span:nth-child(23) {
+    left: 70%;
+    font-size: 22px;
+    animation-delay: -36s;
+    animation-duration: 22s;
+}
+.notation-bg span:nth-child(24) {
+    left: 88%;
+    font-size: 16px;
+    animation-delay: -38s;
+    animation-duration: 23s;
+}
+.notation-bg span:nth-child(26) {
+    left: 92%;
+    font-size: 24px;
+    animation-delay: -40s;
+    animation-duration: 26s;
+}
+.notation-bg span:nth-child(27) {
+    left: 18%;
+    font-size: 18px;
+    animation-delay: -42s;
+    animation-duration: 24s;
+}
+.notation-bg span:nth-child(29) {
+    left: 38%;
+    font-size: 16px;
+    animation-delay: -44s;
+    animation-duration: 23s;
+}
+.notation-bg span:nth-child(30) {
+    left: 62%;
+    font-size: 24px;
+    animation-delay: -46s;
+    animation-duration: 26s;
+}
+.notation-bg span:nth-child(31) {
+    left: 28%;
+    font-size: 20px;
+    animation-delay: -48s;
+    animation-duration: 31s;
+}
+.notation-bg span:nth-child(32) {
+    left: 72%;
+    font-size: 20px;
+    animation-delay: -50s;
+    animation-duration: 21s;
+}
+.notation-bg span:nth-child(33) {
+    left: 8%;
+    font-size: 18px;
+    animation-delay: -52s;
+    animation-duration: 24s;
+}
+.notation-bg span:nth-child(34) {
+    left: 98%;
+    font-size: 22px;
+    animation-delay: -54s;
+    animation-duration: 25s;
+}
+.notation-bg span:nth-child(35) {
+    left: 48%;
+    font-size: 16px;
+    animation-delay: -56s;
+    animation-duration: 23s;
+}
+.notation-bg span:nth-child(37) {
+    left: 22%;
+    font-size: 24px;
+    animation-delay: -58s;
+    animation-duration: 26s;
+}
+.notation-bg span:nth-child(38) {
+    left: 78%;
+    font-size: 18px;
+    animation-delay: -60s;
+    animation-duration: 24s;
+}
+.notation-bg span:nth-child(40) {
+    left: 86%;
+    font-size: 22px;
+    animation-delay: -62s;
+    animation-duration: 26s;
+}
+
+/* A few notations will use the fast shoot-up animation */
+/* UPDATED: Increased animation durations to make them slower */
+.notation-bg span:nth-child(2) {
+    left: 85%;
+    font-size: 22px;
+    animation: shoot-up 8s linear infinite;
+    animation-delay: -4s;
+}
+.notation-bg span:nth-child(6) {
+    left: 5%;
+    font-size: 16px;
+    animation: shoot-up 7s linear infinite;
+    animation-delay: -8s;
+}
+.notation-bg span:nth-child(12) {
+    left: 95%;
+    font-size: 18px;
+    animation: shoot-up 9s linear infinite;
+    animation-delay: -12s;
+}
+.notation-bg span:nth-child(14) {
+    left: 66%;
+    font-size: 20px;
+    animation: shoot-up 8s linear infinite;
+    animation-delay: -15s;
+}
+.notation-bg span:nth-child(18) {
+    left: 45%;
+    font-size: 22px;
+    animation: shoot-up 7.5s linear infinite;
+    animation-delay: -19s;
+}
+.notation-bg span:nth-child(21) {
+    left: 12%;
+    font-size: 18px;
+    animation: shoot-up 9s linear infinite;
+    animation-delay: -23s;
+}
+.notation-bg span:nth-child(25) {
+    left: 3%;
+    font-size: 20px;
+    animation: shoot-up 8.5s linear infinite;
+    animation-delay: -28s;
+}
+.notation-bg span:nth-child(28) {
+    left: 82%;
+    font-size: 20px;
+    animation: shoot-up 7s linear infinite;
+    animation-delay: -33s;
+}
+.notation-bg span:nth-child(36) {
+    left: 52%;
+    font-size: 20px;
+    animation: shoot-up 9s linear infinite;
+    animation-delay: -38s;
+}
+.notation-bg span:nth-child(39) {
+    left: 14%;
+    font-size: 20px;
+    animation: shoot-up 8s linear infinite;
+    animation-delay: -45s;
+}

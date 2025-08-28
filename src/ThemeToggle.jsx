@@ -1,24 +1,25 @@
-import { ActionIcon, useMantineColorScheme } from '@mantine/core';
-import { IconSun, IconMoonStars } from '@tabler/icons-react';
+import { Button } from "react-bootstrap";
 
-function ThemeToggle({ toggleColorScheme }) {
-  const { colorScheme } = useMantineColorScheme();
-
+function ThemeToggle({ theme, toggleTheme }) {
   return (
-    <ActionIcon
-      onClick={toggleColorScheme}
-      size="lg"
-      variant="default"
+    <Button
+      variant="outline-secondary"
+      onClick={toggleTheme}
       aria-label="Toggle color scheme"
       style={{
-        position: 'absolute',
-        top: 15,
-        left: 15,
-        zIndex: 1000,
+        position: "fixed",
+        top: "1rem",
+        right: "1rem",
+        zIndex: 1050, // Ensure it's above other content
       }}
     >
-      {colorScheme === 'dark' ? <IconSun size="1.2rem" /> : <IconMoonStars size="1.2rem" />}
-    </ActionIcon>
+      {/* Using Bootstrap Icons */}
+      <i
+        className={
+          theme === "dark" ? "bi bi-sun-fill" : "bi bi-moon-stars-fill"
+        }
+      ></i>
+    </Button>
   );
 }
 
