@@ -27,6 +27,38 @@
     --danger-color: #dc3545;
 }
 
+/* --- Gate Color Scheme (Corrected) --- */
+/* Base style for all gates to ensure text color contrasts with new backgrounds */
+.gate-item {
+    color: #ffffff;
+    border: none;
+}
+
+/* By chaining .gate-item with the specific gate class, we increase specificity */
+.gate-item.gate-h {
+    background-color: #5dade2;
+} /* A calming blue */
+.gate-item.gate-x {
+    background-color: #58d68d;
+} /* A vibrant green */
+.gate-item.gate-y {
+    background-color: #f5b041;
+} /* A warm orange */
+.gate-item.gate-z {
+    background-color: #ec7063;
+} /* A soft red */
+.gate-item.gate-s {
+    background-color: #af7ac5;
+} /* A rich purple */
+.gate-item.gate-t {
+    background-color: #f7dc6f;
+} /* A bright yellow with dark text */
+.gate-item.gate-cnot {
+    background-color: #48c9b0;
+} /* A refreshing teal */
+.gate-item.gate-swap {
+    background-color: #aab7b8;
+} /* A neutral grey */
 body {
     margin: 0;
     font-family: var(--font-family);

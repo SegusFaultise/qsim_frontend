@@ -20,10 +20,16 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import "./Dashboard.css";
 
-// --- Reusable Components (No changes needed here) ---
+// --- Reusable Components ---
 
-function Gate({ name }) {
-  return <div className="gate-item circuit-gate overlay-gate">{name}</div>;
+function Gate({ name, id }) {
+  // Added id prop to apply specific color class
+  const gateClass = `gate-${id?.toLowerCase()}`;
+  return (
+    <div className={`gate-item circuit-gate overlay-gate ${gateClass}`}>
+      {name}
+    </div>
+  );
 }
 
 function DraggableGate({ id, name }) {
@@ -31,10 +37,12 @@ function DraggableGate({ id, name }) {
     id: id,
     data: { isToolbarGate: true, gateInfo: { id, name } },
   });
+  // Added gate-specific class for coloring
+  const gateClass = `gate-${id.toLowerCase()}`;
 
   return (
     <div
-      className="gate-item toolbar-gate"
+      className={`gate-item toolbar-gate ${gateClass}`}
       ref={setNodeRef}
       {...listeners}
       {...attributes}
@@ -60,10 +68,13 @@ function SortableGate({ id, name, data }) {
     transition,
     opacity: isDragging ? 0 : 1,
   };
+  // Get gate type from data to apply specific color class
+  const gateId = data.gateInfo.id;
+  const gateClass = `gate-${gateId.toLowerCase()}`;
 
   return (
     <div
-      className="gate-item circuit-gate"
+      className={`gate-item circuit-gate ${gateClass}`}
       ref={setNodeRef}
       style={style}
       {...listeners}
@@ -184,14 +195,9 @@ function Dashboard({ theme, toggleTheme }) {
     setCircuit(Array.from({ length: numQubits }, () => []));
   };
 
-  // --- DEBUGGING LOGS ADDED HERE ---
   const handleDragStart = (event) => {
-    console.log("--- 🕵️‍♀️ Drag Start ---");
-    const { active } = event;
-    console.log("Active item:", active);
-    console.log("Active item data:", active.data.current);
-
     setIsDragging(true);
+    const { active } = event;
     const gateData = active.data.current?.isToolbarGate
       ? active.data.current.gateInfo
       : active.data.current?.gateInfo;
@@ -201,28 +207,18 @@ function Dashboard({ theme, toggleTheme }) {
   };
 
   const handleDragEnd = (event) => {
-    console.log("--- 🏁 Drag End ---");
     setIsDragging(false);
     setActiveGate(null);
     const { active, over } = event;
 
-    console.log("Dropped item (active):", JSON.parse(JSON.stringify(active)));
-    console.log("Dropped on (over):", JSON.parse(JSON.stringify(over)));
-
-    if (!over) {
-      console.log("❌ Drag ended over no valid target. Aborting.");
-      return;
-    }
+    if (!over) return;
 
     if (over.id === "trash") {
-      console.log("🗑️ ACTION: Deleting gate.");
       if (active.data.current?.isToolbarGate) return;
       setCircuit((prev) => {
-        const newCircuit = prev.map((line) =>
+        return prev.map((line) =>
           line.filter((gate) => gate.instanceId !== active.id),
         );
-        console.log("✅ State after DELETING gate:", newCircuit);
-        return newCircuit;
       });
       return;
     }
@@ -230,51 +226,36 @@ function Dashboard({ theme, toggleTheme }) {
     const isToolbarGate = active.data.current?.isToolbarGate;
 
     if (isToolbarGate) {
-      console.log("➕ ACTION: Adding NEW gate from toolbar.");
       if (!over.data.current?.isPlaceholder) {
-        console.log("❌ Dropped on non-placeholder. Aborting add.");
         return;
       }
 
       const { gateInfo } = active.data.current;
       const { qubitIndex: targetQubitIndex, index: targetIndex } =
         over.data.current;
-      console.log(
-        `Targeting Qubit Index: ${targetQubitIndex}, Position Index: ${targetIndex}`,
-      );
 
       const newGate = {
         ...gateInfo,
         instanceId: nanoid(),
       };
-      console.log("Creating new gate object:", newGate);
 
-      // --- IMMUTABLE UPDATE FIX ---
       setCircuit((prev) => {
         const newCircuit = prev.map((line, index) => {
           if (index !== targetQubitIndex) {
-            return line; // Return other lines untouched
+            return line;
           }
-          // For the target line, create a new array with the new gate
           const newLine = [...line];
           newLine.splice(targetIndex, 0, newGate);
           return newLine;
         });
-
-        console.log("✅ State after ADDING new gate:", newCircuit);
         return newCircuit;
       });
       return;
     }
 
-    if (active.id === over.id) {
-      console.log("↔️ No change in position. Aborting move.");
-      return;
-    }
+    if (active.id === over.id) return;
 
-    console.log("↔️ ACTION: Moving EXISTING gate in circuit.");
     setCircuit((prev) => {
-      // Logic for moving gates remains the same as it was already safe
       const newCircuit = prev.map((line) => [...line]);
       let sourceQubitIndex = -1,
         sourceGateIndex = -1,
@@ -292,14 +273,7 @@ function Dashboard({ theme, toggleTheme }) {
         }
       }
 
-      if (!movedGate) {
-        console.error("❌ Could not find the gate to move. Aborting.");
-        return prev;
-      }
-      console.log(
-        `Source: Qubit ${sourceQubitIndex}, Index ${sourceGateIndex}`,
-      );
-      console.log("Moved gate object:", movedGate);
+      if (!movedGate) return prev;
 
       const { qubitIndex: targetQubitIndex } = over.data.current;
       let targetIndex;
@@ -314,13 +288,11 @@ function Dashboard({ theme, toggleTheme }) {
             ? overGateIndex
             : newCircuit[targetQubitIndex].length;
       }
-      console.log(`Target: Qubit ${targetQubitIndex}, Index ${targetIndex}`);
 
       if (newCircuit[targetQubitIndex]) {
         newCircuit[targetQubitIndex].splice(targetIndex, 0, movedGate);
       }
 
-      console.log("✅ State after MOVING gate:", newCircuit);
       return newCircuit;
     });
   };
@@ -339,7 +311,6 @@ function Dashboard({ theme, toggleTheme }) {
       <div className="app-layout">
         <aside className="toolbar">
           <div className="toolbar-header">
-            <i className="bi bi-gem app-logo"></i>
             <span className="app-title">Quantum Composer</span>
           </div>
           <div className="toolbar-content">
@@ -369,14 +340,24 @@ function Dashboard({ theme, toggleTheme }) {
               <div className="theme-toggle-wrapper">
                 <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
               </div>
+
+              {/* --- NEW CLEAR BUTTON & UPDATED TRASH BIN --- */}
+              <button
+                className="top-bar-button"
+                onClick={clearCircuit}
+                title="Clear entire circuit"
+              >
+                <i className="bi bi-x-circle"></i> Clear
+              </button>
               <button
                 ref={trashNodeRef}
                 className={trashClasses}
-                onClick={clearCircuit}
-                title="Clear Circuit or Drag Gate to Delete"
+                title="Drag a gate here to delete it"
               >
                 <i className="bi bi-trash"></i>
               </button>
+              {/* ------------------------------------------- */}
+
               <button className="top-bar-button primary">
                 <i className="bi bi-play-fill"></i> Run
               </button>
@@ -406,7 +387,7 @@ function Dashboard({ theme, toggleTheme }) {
         </div>
       </div>
       <DragOverlay>
-        {activeGate ? <Gate name={activeGate.name} /> : null}
+        {activeGate ? <Gate name={activeGate.name} id={activeGate.id} /> : null}
       </DragOverlay>
     </DndContext>
   );
