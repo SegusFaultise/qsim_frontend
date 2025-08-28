@@ -19,14 +19,11 @@ const loginUser = async (username, password) => {
   formData.append("password", password);
 
   // Ensure you have a .env file with VITE_API_BASE_URL=http://localhost:8000
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formData,
-    },
-  );
+  const response = await fetch(`http://localhost:8000/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: formData,
+  });
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -60,8 +57,13 @@ function LoginPage() {
 
   return (
     <div className="login-container">
+      {/* ADDED: Starfield layers */}
+      <div className="stars"></div>
+      <div className="stars2"></div>
+      <div className="stars3"></div>
+
       <div className="notation-bg">
-        {/* UPDATED: Added many more notations */}
+        {/* Notations for the background animation */}
         <span>|0⟩</span>
         <span>H</span>
         <span>|ψ⟩</span>
@@ -155,7 +157,11 @@ function LoginPage() {
                   </Form.Group>
 
                   <div className="d-grid">
-                    <Button variant="dark" type="submit" disabled={isLoading}>
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      disabled={isLoading}
+                    >
                       {isLoading ? (
                         <Spinner
                           as="span"

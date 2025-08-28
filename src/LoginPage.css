@@ -1,14 +1,14 @@
 /* --- Light Theme Override --- */
 /* This rule applies a complementary green theme when the light mode is active */
 [data-bs-theme="light"] .login-container {
+    /* UPDATED: Matched the green sphere gradient to the magenta one */
     background: radial-gradient(
         circle,
-        rgba(0, 255, 0, 0.5) 0%,
-        rgba(0, 33, 0, 0.8) 30%,
-        #001100 70%,
+        rgba(0, 255, 0, 0.5) -40%,
+        rgba(0, 33, 0, 0.8) 25%,
+        #110011 50%,
         #000000 100%
     );
-    /* FIXED: Added animation properties to make the green sphere pulse */
     background-size: 200% 200%;
     animation: hypnotic-pulse 25s ease-in-out infinite;
 }
@@ -40,6 +40,27 @@
     animation-name: shoot-up-light;
 }
 
+/* FIXED: Made the selector more specific and added text color */
+[data-bs-theme="light"] .login-container .btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: limegreen;
+    --bs-btn-border-color: limegreen;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #2b9d2b;
+    --bs-btn-hover-border-color: #2b9d2b;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #258825;
+    --bs-btn-active-border-color: #258825;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+}
+
+/* ADDED: This rule makes the stars float UP on the light theme */
+[data-bs-theme="light"] .stars,
+[data-bs-theme="light"] .stars2,
+[data-bs-theme="light"] .stars3 {
+    animation-name: pan-stars-reverse;
+}
+
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -56,6 +77,22 @@
     animation: hypnotic-pulse 25s ease-in-out infinite;
     position: relative;
     overflow: hidden;
+    /* ADDED: Creates the 3D space for the depth effect */
+    perspective: 1000px;
+}
+
+/* ADDED: This rule changes the login button color in dark theme */
+[data-bs-theme="dark"] .login-container .btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: magenta;
+    --bs-btn-border-color: magenta;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #d600d6;
+    --bs-btn-hover-border-color: #d600d6;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #b800b8;
+    --bs-btn-active-border-color: #b800b8;
+    --bs-btn-focus-shadow-rgb: 255, 0, 255;
 }
 
 @keyframes hypnotic-pulse {
@@ -70,6 +107,61 @@
     }
 }
 
+/* --- Starfield Background --- */
+.stars,
+.stars2,
+.stars3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%; /* Made taller to ensure seamless animation */
+    background-repeat: repeat;
+    background-size: cover;
+    /* UPDATED: Separated animation properties to prevent restart on theme change */
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.stars {
+    background-image: radial-gradient(1px 1px at 25px 25px, white, transparent);
+    background-size: 50px 50px;
+    animation-name: pan-stars;
+    animation-duration: 60s;
+}
+
+.stars2 {
+    background-image: radial-gradient(1px 1px at 10px 10px, white, transparent);
+    background-size: 40px 40px;
+    animation-name: pan-stars;
+    animation-duration: 120s;
+}
+
+.stars3 {
+    background-image: radial-gradient(1px 1px at 40px 40px, white, transparent);
+    background-size: 80px 80px;
+    animation-name: pan-stars;
+    animation-duration: 180s;
+}
+
+@keyframes pan-stars {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes pan-stars-reverse {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
 /* --- Notation Background Styles --- */
 .notation-bg {
     position: absolute;
@@ -78,6 +170,8 @@
     width: 100%;
     height: 100%;
     z-index: 1;
+    /* ADDED: Enables 3D positioning for child elements */
+    transform-style: preserve-3d;
 }
 
 .notation-bg span {
@@ -95,7 +189,7 @@
 /* Animation for dark theme (top to bottom) */
 @keyframes float-down {
     from {
-        transform: translateY(-50vh) rotate(0deg);
+        transform: translateY(-50vh) rotate(0deg) translateZ(var(--depth, 0));
         opacity: 0;
     }
     20%,
@@ -103,7 +197,7 @@
         opacity: 1;
     }
     to {
-        transform: translateY(120vh) rotate(360deg);
+        transform: translateY(120vh) rotate(360deg) translateZ(var(--depth, 0));
         opacity: 0;
     }
 }
@@ -111,7 +205,7 @@
 /* Animation for light theme (bottom to top) */
 @keyframes float-up {
     from {
-        transform: translateY(120vh) rotate(0deg);
+        transform: translateY(120vh) rotate(0deg) translateZ(var(--depth, 0));
         opacity: 0;
     }
     20%,
@@ -119,7 +213,7 @@
         opacity: 1;
     }
     to {
-        transform: translateY(-50vh) rotate(360deg);
+        transform: translateY(-50vh) rotate(360deg) translateZ(var(--depth, 0));
         opacity: 0;
     }
 }
@@ -127,7 +221,7 @@
 /* ADDED: New shoot-down animation for dark theme */
 @keyframes shoot-down {
     from {
-        transform: translateY(-50vh);
+        transform: translateY(-50vh) translateZ(var(--depth, 0));
         opacity: 0;
     }
     70% {
@@ -138,7 +232,7 @@
             0 0 20px white;
     }
     to {
-        transform: translateY(120vh);
+        transform: translateY(120vh) translateZ(var(--depth, 0));
         opacity: 0;
         color: white;
         text-shadow:
@@ -149,7 +243,7 @@
 
 @keyframes shoot-up {
     from {
-        transform: translateY(120vh);
+        transform: translateY(120vh) translateZ(var(--depth, 0));
         opacity: 0;
     }
     70% {
@@ -160,7 +254,7 @@
             0 0 20px white;
     }
     to {
-        transform: translateY(-50vh);
+        transform: translateY(-50vh) translateZ(var(--depth, 0));
         opacity: 0;
         color: white;
         text-shadow:
@@ -172,7 +266,7 @@
 /* ADDED: New shoot-up animation for light theme with correct colors */
 @keyframes shoot-up-light {
     from {
-        transform: translateY(120vh);
+        transform: translateY(120vh) translateZ(var(--depth, 0));
         opacity: 0;
     }
     70% {
@@ -183,7 +277,7 @@
             0 0 20px white;
     }
     to {
-        transform: translateY(-50vh);
+        transform: translateY(-50vh) translateZ(var(--depth, 0));
         opacity: 0;
         color: white;
         text-shadow:
@@ -222,186 +316,189 @@
     }
 }
 
-/* --- Applying Animations --- */
+/* --- Applying Animations and Depth --- */
+/* Foreground Layer (Fast, Large, Close) */
+.notation-bg span:nth-child(3n) {
+    --depth: 300px;
+    font-size: 24px;
+    animation-duration: 15s;
+}
+
+/* Midground Layer (Default) */
+.notation-bg span:nth-child(3n + 1) {
+    --depth: 0px;
+    font-size: 18px;
+    animation-duration: 25s;
+}
+
+/* Background Layer (Slow, Small, Far) */
+.notation-bg span:nth-child(3n + 2) {
+    --depth: -300px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.05);
+    animation-duration: 35s;
+}
+
+/* --- Applying Specific Positions --- */
 .notation-bg span:nth-child(1) {
     left: 10%;
-    font-size: 16px;
     animation-delay: -2s;
-    animation-duration: 22s;
+}
+.notation-bg span:nth-child(2) {
+    left: 85%;
+    animation-delay: -4s;
 }
 .notation-bg span:nth-child(3) {
     left: 40%;
-    font-size: 18px;
     animation-delay: -6s;
-    animation-duration: 24s;
 }
 .notation-bg span:nth-child(4) {
     left: 41%;
-    font-size: 20px;
     animation-delay: -8s;
-    animation-duration: 28s;
 }
 .notation-bg span:nth-child(5) {
     left: 59%;
-    font-size: 20px;
     animation-delay: -10s;
-    animation-duration: 21s;
+}
+.notation-bg span:nth-child(6) {
+    left: 70%;
+    animation-delay: -12s;
 }
 .notation-bg span:nth-child(7) {
-    left: 70%;
-    font-size: 24px;
-    animation-delay: -12s;
-    animation-duration: 26s;
+    left: 25%;
+    animation-delay: -14s;
 }
 .notation-bg span:nth-child(8) {
-    left: 25%;
-    font-size: 16px;
-    animation-delay: -14s;
-    animation-duration: 23s;
+    left: 15%;
+    animation-delay: -16s;
 }
 .notation-bg span:nth-child(9) {
-    left: 15%;
-    font-size: 22px;
-    animation-delay: -16s;
-    animation-duration: 29s;
+    left: 85%;
+    animation-delay: -18s;
 }
 .notation-bg span:nth-child(10) {
-    left: 85%;
-    font-size: 22px;
-    animation-delay: -18s;
-    animation-duration: 20s;
+    left: 5%;
+    animation-delay: -20s;
 }
 .notation-bg span:nth-child(11) {
-    left: 5%;
-    font-size: 26px;
-    animation-delay: -20s;
-    animation-duration: 27s;
+    left: 33%;
+    animation-delay: -22s;
+}
+.notation-bg span:nth-child(12) {
+    left: 20%;
+    animation-delay: -24s;
 }
 .notation-bg span:nth-child(13) {
-    left: 33%;
-    font-size: 16px;
-    animation-delay: -22s;
-    animation-duration: 25s;
+    left: 80%;
+    animation-delay: -26s;
+}
+.notation-bg span:nth-child(14) {
+    left: 55%;
+    animation-delay: -28s;
 }
 .notation-bg span:nth-child(15) {
-    left: 20%;
-    font-size: 24px;
-    animation-delay: -24s;
-    animation-duration: 29s;
+    left: 75%;
+    animation-delay: -30s;
 }
 .notation-bg span:nth-child(16) {
-    left: 80%;
-    font-size: 24px;
-    animation-delay: -26s;
-    animation-duration: 21s;
+    left: 25%;
+    animation-delay: -32s;
 }
 .notation-bg span:nth-child(17) {
-    left: 55%;
-    font-size: 18px;
-    animation-delay: -28s;
-    animation-duration: 26s;
+    left: 30%;
+    animation-delay: -34s;
+}
+.notation-bg span:nth-child(18) {
+    left: 70%;
+    animation-delay: -36s;
 }
 .notation-bg span:nth-child(19) {
-    left: 75%;
-    font-size: 16px;
-    animation-delay: -30s;
-    animation-duration: 27s;
+    left: 88%;
+    animation-delay: -38s;
 }
 .notation-bg span:nth-child(20) {
-    left: 25%;
-    font-size: 20px;
-    animation-delay: -32s;
-    animation-duration: 25s;
+    left: 92%;
+    animation-delay: -40s;
+}
+.notation-bg span:nth-child(21) {
+    left: 18%;
+    animation-delay: -42s;
 }
 .notation-bg span:nth-child(22) {
-    left: 30%;
-    font-size: 22px;
-    animation-delay: -34s;
-    animation-duration: 32s;
+    left: 38%;
+    animation-delay: -44s;
 }
 .notation-bg span:nth-child(23) {
-    left: 70%;
-    font-size: 22px;
-    animation-delay: -36s;
-    animation-duration: 22s;
+    left: 62%;
+    animation-delay: -46s;
 }
 .notation-bg span:nth-child(24) {
-    left: 88%;
-    font-size: 16px;
-    animation-delay: -38s;
-    animation-duration: 23s;
+    left: 28%;
+    animation-delay: -48s;
+}
+.notation-bg span:nth-child(25) {
+    left: 72%;
+    animation-delay: -50s;
 }
 .notation-bg span:nth-child(26) {
-    left: 92%;
-    font-size: 24px;
-    animation-delay: -40s;
-    animation-duration: 26s;
+    left: 8%;
+    animation-delay: -52s;
 }
 .notation-bg span:nth-child(27) {
-    left: 18%;
-    font-size: 18px;
-    animation-delay: -42s;
-    animation-duration: 24s;
+    left: 98%;
+    animation-delay: -54s;
+}
+.notation-bg span:nth-child(28) {
+    left: 48%;
+    animation-delay: -56s;
 }
 .notation-bg span:nth-child(29) {
-    left: 38%;
-    font-size: 16px;
-    animation-delay: -44s;
-    animation-duration: 23s;
+    left: 22%;
+    animation-delay: -58s;
 }
 .notation-bg span:nth-child(30) {
-    left: 62%;
-    font-size: 24px;
-    animation-delay: -46s;
-    animation-duration: 26s;
+    left: 78%;
+    animation-delay: -60s;
 }
 .notation-bg span:nth-child(31) {
-    left: 28%;
-    font-size: 20px;
-    animation-delay: -48s;
-    animation-duration: 31s;
+    left: 86%;
+    animation-delay: -62s;
 }
 .notation-bg span:nth-child(32) {
-    left: 72%;
-    font-size: 20px;
-    animation-delay: -50s;
-    animation-duration: 21s;
+    left: 14%;
+    animation-delay: -64s;
 }
 .notation-bg span:nth-child(33) {
-    left: 8%;
-    font-size: 18px;
-    animation-delay: -52s;
-    animation-duration: 24s;
+    left: 52%;
+    animation-delay: -66s;
 }
 .notation-bg span:nth-child(34) {
-    left: 98%;
-    font-size: 22px;
-    animation-delay: -54s;
-    animation-duration: 25s;
+    left: 35%;
+    animation-delay: -68s;
 }
 .notation-bg span:nth-child(35) {
-    left: 48%;
-    font-size: 16px;
-    animation-delay: -56s;
-    animation-duration: 23s;
+    left: 65%;
+    animation-delay: -70s;
+}
+.notation-bg span:nth-child(36) {
+    left: 5%;
+    animation-delay: -72s;
 }
 .notation-bg span:nth-child(37) {
-    left: 22%;
-    font-size: 24px;
-    animation-delay: -58s;
-    animation-duration: 26s;
+    left: 95%;
+    animation-delay: -74s;
 }
 .notation-bg span:nth-child(38) {
-    left: 78%;
-    font-size: 18px;
-    animation-delay: -60s;
-    animation-duration: 24s;
+    left: 45%;
+    animation-delay: -76s;
+}
+.notation-bg span:nth-child(39) {
+    left: 55%;
+    animation-delay: -78s;
 }
 .notation-bg span:nth-child(40) {
-    left: 86%;
-    font-size: 22px;
-    animation-delay: -62s;
-    animation-duration: 26s;
+    left: 15%;
+    animation-delay: -80s;
 }
 
 /* Default "shooting star" animation is now shoot-down */
