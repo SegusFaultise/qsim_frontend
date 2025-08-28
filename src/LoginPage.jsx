@@ -10,15 +10,14 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useAuth } from "./context/AuthContext";
+import ThemeToggle from "./ThemeToggle"; // Import the ThemeToggle component
 import "./LoginPage.css";
 
-// This function handles the API call to the backend for authentication.
 const loginUser = async (username, password) => {
   const formData = new URLSearchParams();
   formData.append("username", username);
   formData.append("password", password);
 
-  // Ensure you have a .env file with VITE_API_BASE_URL=http://localhost:8000
   const response = await fetch(`http://localhost:8000/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -34,7 +33,8 @@ const loginUser = async (username, password) => {
   return response.json();
 };
 
-function LoginPage() {
+// Accept theme and toggleTheme as props
+function LoginPage({ theme, toggleTheme }) {
   const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -57,7 +57,9 @@ function LoginPage() {
 
   return (
     <div className="login-container">
-      {/* ADDED: Starfield layers */}
+      {/* Render the ThemeToggle component */}
+      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+
       <div className="stars"></div>
       <div className="stars2"></div>
       <div className="stars3"></div>

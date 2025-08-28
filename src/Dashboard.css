@@ -1,147 +1,342 @@
-.dashboard-layout {
-    display: flex;
-    height: 100vh;
-    background-color: #1a1a1a;
-    color: white;
+/* --- FONT & GLOBAL STYLES --- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+    --bg-primary: #1a1d21;
+    --bg-secondary: #23272c;
+    --bg-tertiary: #2b3036;
+    --border-color: #3b4148;
+    --text-primary: #e3e4e6;
+    --text-secondary: #a0a7b0;
+    --accent-primary: #5865f2;
+    --accent-secondary: #7d89ff;
+    --danger-color: #f25858;
+    --font-family: "Inter", sans-serif;
 }
 
-/* --- Sidebar --- */
-.sidebar {
-    width: 80px;
-    background-color: #000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem 0;
-    transition: width 0.3s ease;
+/* --- LIGHT THEME OVERRIDES --- */
+[data-bs-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --border-color: #dee2e6;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --accent-primary: #0d6efd;
+    --accent-secondary: #0a58ca;
+    --danger-color: #dc3545;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+/* --- MAIN LAYOUT --- */
+.app-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    height: 100vh;
+}
+
+.main-container {
+    display: grid;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
     overflow: hidden;
 }
 
-.sidebar:hover {
-    width: 200px;
-}
-
-.sidebar-logo {
-    margin-bottom: 2rem;
-}
-
-.sidebar-nav {
+/* --- LEFT TOOLBAR --- */
+.toolbar {
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    width: 100%;
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease;
 }
 
-.nav-item {
+.toolbar-header {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    background: none;
-    border: none;
-    color: #888;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+    gap: 12px;
+    padding: 0 20px;
+    height: 60px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    transition: border-color 0.3s ease;
 }
 
-.nav-item i {
-    font-size: 1.5rem;
-    min-width: 2rem;
+.app-logo {
+    color: var(--accent-primary);
+    font-size: 1.6rem;
+    transition: color 0.3s ease;
 }
 
-.nav-text {
-    margin-left: 1rem;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.app-title {
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 
-.sidebar:hover .nav-text {
-    opacity: 1;
-}
-
-.nav-item:hover {
-    color: white;
-}
-
-.nav-item.active {
-    color: magenta;
-    background-color: rgba(255, 0, 255, 0.1);
-    border-left: 3px solid magenta;
-}
-
-.sidebar-footer {
-    margin-top: auto;
-    width: 100%;
-}
-
-/* --- Main Content --- */
-.main-content {
-    flex-grow: 1;
-    padding: 2rem;
+.toolbar-content {
+    padding: 20px;
     overflow-y: auto;
 }
 
-.circuit-board {
-    min-height: 400px;
-    background-color: #222;
-    border: 2px dashed #555;
-    border-radius: 8px;
-    padding: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-content: flex-start;
+.toolbar-title {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 1rem 0;
 }
 
+.gate-palette {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+/* --- TOP BAR --- */
+.top-bar {
+    grid-row: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.top-bar-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.qubit-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--bg-tertiary);
+    padding: 6px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+.qubit-controls span {
+    font-weight: 500;
+    padding: 0 8px;
+}
+.qubit-controls button {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.qubit-controls button:hover {
+    background: #363c44;
+    color: var(--text-primary);
+}
+[data-bs-theme="light"] .qubit-controls button:hover {
+    background: #d4d6d8;
+}
+
+.top-bar-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.top-bar-button:hover {
+    background-color: #363c44;
+}
+
+[data-bs-theme="light"] .top-bar-button:hover {
+    background-color: #d4d6d8;
+}
+
+.top-bar-button.primary {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-secondary);
+    color: white;
+    font-size: 1rem;
+}
+.top-bar-button.primary:hover {
+    background-color: var(--accent-secondary);
+}
+.top-bar-button.primary i {
+    font-size: 1.2rem;
+}
+
+/* --- Trash Can --- */
+.trash-bin {
+    padding: 8px;
+    width: 44px;
+    justify-content: center;
+    font-size: 1.2rem;
+    opacity: 0; /* Hidden by default */
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+}
+.trash-bin.active {
+    opacity: 1; /* Visible when dragging a circuit gate */
+    visibility: visible;
+    transform: scale(1);
+}
+.trash-bin.over {
+    background-color: var(--danger-color);
+    color: white;
+    border-color: var(--danger-color);
+    transform: scale(1.1);
+}
+
+/* --- Theme Toggle Wrapper --- */
+.theme-toggle-wrapper {
+    position: relative;
+    width: 44px;
+    height: 44px;
+}
+.theme-toggle-wrapper .theme-toggle-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- MAIN CONTENT & CIRCUIT BOARD --- */
+.main-content {
+    grid-row: 2;
+    overflow: auto;
+    padding: 2rem;
+    background-image: radial-gradient(var(--bg-tertiary) 1px, transparent 1px);
+    background-size: 20px 20px;
+    transition: background-image 0.3s ease;
+}
+
+.circuit-board {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: fit-content;
+}
+
+.qubit-line-container {
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+}
+
+.qubit-label {
+    color: var(--text-secondary);
+    font-family: monospace;
+    font-size: 1.1rem;
+    width: 80px;
+    text-align: right;
+    padding-right: 20px;
+}
+
+.qubit-line {
+    flex-grow: 1;
+    height: 2px;
+    background-color: var(--border-color);
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.gate-slots {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    min-height: 60px;
+    padding: 0 10px;
+}
+
+/* --- Snap-to-Grid Placeholder --- */
+.is-dragging .gate-slots::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 50px;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    margin-left: auto; /* Pushes it to the end of the line */
+}
+
+/* --- SHARED GATE STYLES --- */
 .gate-item {
-    padding: 0.75rem;
-    background-color: #3a3a3a;
-    border: 1px solid #555;
-    border-radius: 4px;
-    cursor: grab;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     user-select: none;
+    font-family: monospace;
+    font-weight: bold;
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.gate-item:active {
+    cursor: grabbing;
+}
+
+.toolbar-gate {
+    background-color: var(--bg-tertiary);
+    height: 50px;
+}
+.toolbar-gate:hover {
+    background-color: #363c44;
+    border-color: var(--text-secondary);
+}
+[data-bs-theme="light"] .toolbar-gate:hover {
+    background-color: #d4d6d8;
 }
 
 .circuit-gate {
-    background-color: magenta;
-    border-color: #ff00ff;
+    width: 50px;
+    height: 50px;
+    background-color: var(--accent-primary);
+    border-color: var(--accent-secondary);
     color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-
-/* --- Light Theme Overrides --- */
-[data-bs-theme="light"] .dashboard-layout {
-    background-color: #f8f9fa;
-    color: #212529;
-}
-
-[data-bs-theme="light"] .sidebar {
-    background-color: #e9ecef;
-}
-
-[data-bs-theme="light"] .nav-item {
-    color: #6c757d;
-}
-
-[data-bs-theme="light"] .nav-item:hover {
-    color: #000;
-}
-
-[data-bs-theme="light"] .nav-item.active {
-    color: limegreen;
-    background-color: rgba(0, 255, 0, 0.1);
-    border-left: 3px solid limegreen;
-}
-
-[data-bs-theme="light"] .circuit-board {
-    background-color: #e9ecef;
-    border-color: #ced4da;
-}
-
 [data-bs-theme="light"] .circuit-gate {
-    background-color: limegreen;
-    border-color: #28a745;
-    color: white;
+    color: var(--text-primary);
+}
+
+.overlay-gate {
+    cursor: grabbing;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
 }
