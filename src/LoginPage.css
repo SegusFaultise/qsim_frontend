@@ -1,3 +1,45 @@
+/* --- Light Theme Override --- */
+/* This rule applies a complementary green theme when the light mode is active */
+[data-bs-theme="light"] .login-container {
+    background: radial-gradient(
+        circle,
+        rgba(0, 255, 0, 0.5) 0%,
+        rgba(0, 33, 0, 0.8) 30%,
+        #001100 70%,
+        #000000 100%
+    );
+    /* FIXED: Added animation properties to make the green sphere pulse */
+    background-size: 200% 200%;
+    animation: hypnotic-pulse 25s ease-in-out infinite;
+}
+
+[data-bs-theme="light"] .notation-bg span.shooting-star::after {
+    background: radial-gradient(
+        circle,
+        rgba(0, 255, 0, 0.5) 0%,
+        transparent 70%
+    );
+}
+
+/* This rule makes the notations float UP on the light theme */
+[data-bs-theme="light"] .notation-bg span {
+    animation-name: float-up;
+}
+
+/* FIXED: This rule makes the shooting stars use the correct light theme animation */
+[data-bs-theme="light"] .notation-bg span:nth-child(2),
+[data-bs-theme="light"] .notation-bg span:nth-child(6),
+[data-bs-theme="light"] .notation-bg span:nth-child(12),
+[data-bs-theme="light"] .notation-bg span:nth-child(14),
+[data-bs-theme="light"] .notation-bg span:nth-child(18),
+[data-bs-theme="light"] .notation-bg span:nth-child(21),
+[data-bs-theme="light"] .notation-bg span:nth-child(25),
+[data-bs-theme="light"] .notation-bg span:nth-child(28),
+[data-bs-theme="light"] .notation-bg span:nth-child(36),
+[data-bs-theme="light"] .notation-bg span:nth-child(39) {
+    animation-name: shoot-up-light;
+}
+
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -44,11 +86,29 @@
     font-family: "Courier New", Courier, monospace;
     font-weight: bold;
     user-select: none;
-    animation: float-up 20s linear infinite; /* Slower default speed for contrast */
+    /* Default animation is now float-down for the dark theme */
+    animation: float-down 20s linear infinite;
     will-change: transform, opacity;
 }
 
 /* --- Keyframe Animations --- */
+/* Animation for dark theme (top to bottom) */
+@keyframes float-down {
+    from {
+        transform: translateY(-50vh) rotate(0deg);
+        opacity: 0;
+    }
+    20%,
+    80% {
+        opacity: 1;
+    }
+    to {
+        transform: translateY(120vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Animation for light theme (bottom to top) */
 @keyframes float-up {
     from {
         transform: translateY(120vh) rotate(0deg);
@@ -64,7 +124,29 @@
     }
 }
 
-/* UPDATED: Animation for glowing, fast-moving notations */
+/* ADDED: New shoot-down animation for dark theme */
+@keyframes shoot-down {
+    from {
+        transform: translateY(-50vh);
+        opacity: 0;
+    }
+    70% {
+        opacity: 1;
+        color: white;
+        text-shadow:
+            0 0 10px magenta,
+            0 0 20px white;
+    }
+    to {
+        transform: translateY(120vh);
+        opacity: 0;
+        color: white;
+        text-shadow:
+            0 0 10px magenta,
+            0 0 20px white;
+    }
+}
+
 @keyframes shoot-up {
     from {
         transform: translateY(120vh);
@@ -73,7 +155,6 @@
     70% {
         opacity: 1;
         color: white;
-        /* Glow effect using text-shadow */
         text-shadow:
             0 0 10px magenta,
             0 0 20px white;
@@ -88,7 +169,29 @@
     }
 }
 
-/* This pseudo-element is no longer used for the glow but kept for potential future effects */
+/* ADDED: New shoot-up animation for light theme with correct colors */
+@keyframes shoot-up-light {
+    from {
+        transform: translateY(120vh);
+        opacity: 0;
+    }
+    70% {
+        opacity: 1;
+        color: white;
+        text-shadow:
+            0 0 10px limegreen,
+            0 0 20px white;
+    }
+    to {
+        transform: translateY(-50vh);
+        opacity: 0;
+        color: white;
+        text-shadow:
+            0 0 10px limegreen,
+            0 0 20px white;
+    }
+}
+
 .notation-bg span.shooting-star::after {
     content: "";
     position: absolute;
@@ -97,7 +200,12 @@
     transform: translate(-50%, 50%);
     width: 150%;
     height: 200px;
-    background: transparent;
+    background: radial-gradient(
+        circle,
+        rgba(255, 0, 255, 0.5) 0%,
+        transparent 70%
+    );
+    filter: blur(15px);
     opacity: 0;
     animation: streak-fade 4s linear infinite;
     will-change: opacity;
@@ -110,12 +218,11 @@
     }
     50%,
     70% {
-        opacity: 0;
-    } /* Kept at 0 as text-shadow is now used */
+        opacity: 0.7;
+    }
 }
 
 /* --- Applying Animations --- */
-/* Most notations will use the slow float-up animation */
 .notation-bg span:nth-child(1) {
     left: 10%;
     font-size: 16px;
@@ -297,65 +404,64 @@
     animation-duration: 26s;
 }
 
-/* A few notations will use the fast shoot-up animation */
-/* UPDATED: Increased animation durations to make them slower */
+/* Default "shooting star" animation is now shoot-down */
 .notation-bg span:nth-child(2) {
     left: 85%;
     font-size: 22px;
-    animation: shoot-up 8s linear infinite;
+    animation: shoot-down 8s linear infinite;
     animation-delay: -4s;
 }
 .notation-bg span:nth-child(6) {
     left: 5%;
     font-size: 16px;
-    animation: shoot-up 7s linear infinite;
+    animation: shoot-down 7s linear infinite;
     animation-delay: -8s;
 }
 .notation-bg span:nth-child(12) {
     left: 95%;
     font-size: 18px;
-    animation: shoot-up 9s linear infinite;
+    animation: shoot-down 9s linear infinite;
     animation-delay: -12s;
 }
 .notation-bg span:nth-child(14) {
     left: 66%;
     font-size: 20px;
-    animation: shoot-up 8s linear infinite;
+    animation: shoot-down 8s linear infinite;
     animation-delay: -15s;
 }
 .notation-bg span:nth-child(18) {
     left: 45%;
     font-size: 22px;
-    animation: shoot-up 7.5s linear infinite;
+    animation: shoot-down 7.5s linear infinite;
     animation-delay: -19s;
 }
 .notation-bg span:nth-child(21) {
     left: 12%;
     font-size: 18px;
-    animation: shoot-up 9s linear infinite;
+    animation: shoot-down 9s linear infinite;
     animation-delay: -23s;
 }
 .notation-bg span:nth-child(25) {
     left: 3%;
     font-size: 20px;
-    animation: shoot-up 8.5s linear infinite;
+    animation: shoot-down 8.5s linear infinite;
     animation-delay: -28s;
 }
 .notation-bg span:nth-child(28) {
     left: 82%;
     font-size: 20px;
-    animation: shoot-up 7s linear infinite;
+    animation: shoot-down 7s linear infinite;
     animation-delay: -33s;
 }
 .notation-bg span:nth-child(36) {
     left: 52%;
     font-size: 20px;
-    animation: shoot-up 9s linear infinite;
+    animation: shoot-down 9s linear infinite;
     animation-delay: -38s;
 }
 .notation-bg span:nth-child(39) {
     left: 14%;
     font-size: 20px;
-    animation: shoot-up 8s linear infinite;
+    animation: shoot-down 8s linear infinite;
     animation-delay: -45s;
 }

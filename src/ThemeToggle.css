@@ -1,0 +1,112 @@
+.theme-toggle-button {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1050;
+    background: rgba(128, 128, 128, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 8px;
+    /* UPDATED: Increased size */
+    width: 70px;
+    height: 70px;
+    backdrop-filter: blur(5px);
+    transition: transform 0.2s ease;
+}
+
+/* UPDATED: Combined the hover effects */
+.theme-toggle-button:hover .state-vector {
+    /* Rotates to superposition and scales down slightly to prevent clipping */
+    transform: rotate(90deg) scale(0.9);
+}
+
+.theme-toggle-button:hover .sphere-line {
+    /* ADDED: Makes the sphere lines glow on hover */
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 2px magenta);
+}
+
+.theme-icon-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* --- Bloch Sphere Styles --- */
+.sphere-background {
+    fill: rgba(255, 0, 255, 0.1);
+}
+
+.sphere-line {
+    fill: none;
+    stroke: magenta;
+    stroke-width: 1;
+    transition: all 0.3s ease; /* Added for smooth hover effect */
+}
+
+.sphere-axis {
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 1;
+    stroke-dasharray: 2, 2;
+}
+
+.pole-label {
+    fill: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    font-family: monospace;
+}
+
+.state-vector {
+    /* FIXED: Changed the pivot point to the center of the sphere */
+    transform-origin: 0 0;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Smooth, bouncy transition */
+}
+
+.vector-line {
+    stroke: white;
+    stroke-width: 2;
+    transition: stroke 0.3s ease;
+}
+
+.vector-arrow {
+    fill: white;
+    transition: fill 0.3s ease;
+}
+
+/* --- Light Theme Styles --- */
+[data-bs-theme="light"] .sphere-background {
+    fill: rgba(0, 255, 0, 0.1);
+}
+
+[data-bs-theme="light"] .sphere-line {
+    stroke: limegreen;
+}
+
+/* Flips the state vector to the |1⟩ state on theme change */
+[data-bs-theme="light"] .state-vector {
+    transform: rotate(180deg);
+}
+
+/* When hovering in light mode, the vector still goes to superposition */
+[data-bs-theme="light"] .theme-toggle-button:hover .state-vector {
+    transform: rotate(90deg) scale(0.9);
+}
+
+/* ADDED: Hover effect for the sphere lines in light mode */
+[data-bs-theme="light"] .theme-toggle-button:hover .sphere-line {
+    filter: drop-shadow(0 0 3px limegreen);
+}
+
+/* FIXED: Changed the vector color to be always white */
+[data-bs-theme="light"] .vector-line {
+    stroke: white;
+}
+
+[data-bs-theme="light"] .vector-arrow {
+    fill: white;
+}
+
+[data-bs-theme="light"] .pole-label {
+    fill: rgba(255, 255, 255, 0.7);
+}
