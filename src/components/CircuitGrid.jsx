@@ -61,17 +61,39 @@ function CircuitGrid({
     });
   });
 
+  // MODIFIED: This function now only shows placement prompts on qubits BELOW the first control.
   const getPendingStatus = (q_idx, c_idx) => {
-    if (!pendingGate || pendingGate.columnIndex !== c_idx) return null;
-    if (pendingGate.controlQubits.includes(q_idx)) return "control";
-    if (!circuit[q_idx][c_idx]) {
-      if (
-        pendingGate.controlQubits.length < (pendingGate.gate.controlCount || 1)
-      ) {
-        return "targetable-control";
-      }
-      return "targetable-target";
+    // No pending gate or not in the right column, do nothing.
+    if (!pendingGate || pendingGate.columnIndex !== c_idx) {
+      return null;
     }
+
+    // If the current cell is already an active control for this pending gate,
+    // it should be styled as a control part.
+    if (pendingGate.controlQubits.includes(q_idx)) {
+      return "control";
+    }
+
+    // Now, determine if this cell should be a glowing prompt.
+    // A cell can only be a prompt if it's empty.
+    if (!circuit[q_idx][c_idx]) {
+      // Get the qubit index of the first control that was placed.
+      const firstControlQubit = pendingGate.controlQubits[0];
+
+      // The user wants prompts to ONLY appear on qubits BELOW the first one.
+      if (q_idx > firstControlQubit) {
+        // Check if we are still selecting controls or if we need a target.
+        if (
+          pendingGate.controlQubits.length <
+          (pendingGate.gate.controlCount || 1)
+        ) {
+          return "targetable-control";
+        }
+        return "targetable-target";
+      }
+    }
+
+    // Otherwise, it's not a valid spot.
     return null;
   };
 
@@ -93,8 +115,6 @@ function CircuitGrid({
         <div
           className="circuit-grid"
           style={{
-            // This is the key change: `auto` lets columns resize based on their content.
-            gridTemplateColumns: `repeat(${numSteps}, auto)`,
             gridTemplateRows: `repeat(${numQubits}, var(--gate-size))`,
           }}
         >
@@ -114,14 +134,20 @@ function CircuitGrid({
           {circuit.map((row, q_idx) =>
             row.map((gate, c_idx) => {
               const cellId = `${q_idx}-${c_idx}`;
+              // If this cell is part of an already rendered multi-qubit gate, just render an empty droppable cell
               if (gate && renderedMultiGateIds.has(gate.instanceId)) {
                 return (
-                  <DroppableCell
+                  <div
                     key={cellId}
-                    id={cellId}
-                    qubitIndex={q_idx}
-                    columnIndex={c_idx}
-                  />
+                    className="circuit-grid__cell"
+                    style={{ gridRow: q_idx + 1, gridColumn: c_idx + 1 }}
+                  >
+                    <DroppableCell
+                      id={cellId}
+                      qubitIndex={q_idx}
+                      columnIndex={c_idx}
+                    />
+                  </div>
                 );
               }
 
@@ -129,23 +155,32 @@ function CircuitGrid({
               const isAvailable = isToolbarDrag && !gate;
 
               return (
-                <DroppableCell
+                <div
                   key={cellId}
-                  id={cellId}
-                  qubitIndex={q_idx}
-                  columnIndex={c_idx}
-                  pendingStatus={pendingStatus}
-                  isAvailable={isAvailable}
-                  onClick={() => onCellClick(q_idx, c_idx)}
+                  className="circuit-grid__cell"
+                  style={{ gridRow: q_idx + 1, gridColumn: c_idx + 1 }}
                 >
-                  {gate && (
-                    <SingleQubitGate
-                      gate={{ ...gate, qubitIndex: q_idx, columnIndex: c_idx }}
-                      onContextMenu={onContextMenu}
-                      onDoubleClick={onGateDoubleClick}
-                    />
-                  )}
-                </DroppableCell>
+                  <DroppableCell
+                    id={cellId}
+                    qubitIndex={q_idx}
+                    columnIndex={c_idx}
+                    pendingStatus={pendingStatus}
+                    isAvailable={isAvailable}
+                    onClick={() => onCellClick(q_idx, c_idx)}
+                  >
+                    {gate && (
+                      <SingleQubitGate
+                        gate={{
+                          ...gate,
+                          qubitIndex: q_idx,
+                          columnIndex: c_idx,
+                        }}
+                        onContextMenu={onContextMenu}
+                        onDoubleClick={onGateDoubleClick}
+                      />
+                    )}
+                  </DroppableCell>
+                </div>
               );
             }),
           )}
