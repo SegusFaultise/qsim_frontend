@@ -111,7 +111,7 @@ function LoginPage({ theme, toggleTheme }) {
         <Row className="justify-content-center">
           <Col md={6} lg={4}>
             <div className="text-center mb-4 text-primary">
-              <h1 className="h2 text-light mt-3">QISM</h1>
+              <h1 className="h2 text-light mt-3">qism</h1>
               <p className="text-white-50">
                 Quantum Information & Simulation Manager
               </p>
@@ -130,7 +130,7 @@ function LoginPage({ theme, toggleTheme }) {
                     <Form.Label>Username</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Enter username"
+                      placeholder="username..."
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
@@ -141,21 +141,11 @@ function LoginPage({ theme, toggleTheme }) {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
-                      placeholder="Password"
+                      placeholder="password..."
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
-                  </Form.Group>
-
-                  <Form.Group
-                    className="d-flex justify-content-between mb-3"
-                    controlId="formCheckbox"
-                  >
-                    <Form.Check type="checkbox" label="Remember me" />
-                    <a href="#" className="small text-decoration-none">
-                      Forgot password?
-                    </a>
                   </Form.Group>
 
                   <div className="d-grid">

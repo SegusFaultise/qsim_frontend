@@ -12,9 +12,9 @@
     --accent-secondary: #7d89ff;
     --danger-color: #f25858;
     --font-family: "Inter", sans-serif;
+    --gate-color-multi: #00a398; /* New high-contrast color for dark theme */
 }
 
-/* --- LIGHT THEME OVERRIDES --- */
 [data-bs-theme="light"] {
     --bg-primary: #ffffff;
     --bg-secondary: #f8f9fa;
@@ -25,49 +25,15 @@
     --accent-primary: #0d6efd;
     --accent-secondary: #0a58ca;
     --danger-color: #dc3545;
+    --gate-color-multi: #007b73; /* New high-contrast color for light theme */
 }
 
-/* --- Gate Color Scheme (Corrected) --- */
-/* Base style for all gates to ensure text color contrasts with new backgrounds */
-.gate-item {
-    color: #ffffff;
-    border: none;
-}
-
-/* By chaining .gate-item with the specific gate class, we increase specificity */
-.gate-item.gate-h {
-    background-color: #5dade2;
-} /* A calming blue */
-.gate-item.gate-x {
-    background-color: #58d68d;
-} /* A vibrant green */
-.gate-item.gate-y {
-    background-color: #f5b041;
-} /* A warm orange */
-.gate-item.gate-z {
-    background-color: #ec7063;
-} /* A soft red */
-.gate-item.gate-s {
-    background-color: #af7ac5;
-} /* A rich purple */
-.gate-item.gate-t {
-    background-color: #f7dc6f;
-} /* A bright yellow with dark text */
-.gate-item.gate-cnot {
-    background-color: #48c9b0;
-} /* A refreshing teal */
-.gate-item.gate-swap {
-    background-color: #aab7b8;
-} /* A neutral grey */
 body {
     margin: 0;
     font-family: var(--font-family);
     background-color: var(--bg-primary);
     color: var(--text-primary);
     overflow: hidden;
-    transition:
-        background-color 0.3s ease,
-        color 0.3s ease;
 }
 
 /* --- MAIN LAYOUT --- */
@@ -76,7 +42,6 @@ body {
     grid-template-columns: 240px 1fr;
     height: 100vh;
 }
-
 .main-container {
     display: grid;
     grid-template-rows: 60px 1fr;
@@ -90,11 +55,7 @@ body {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    transition:
-        background-color 0.3s ease,
-        border-color 0.3s ease;
 }
-
 .toolbar-header {
     display: flex;
     align-items: center;
@@ -103,33 +64,25 @@ body {
     height: 60px;
     border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
-    transition: border-color 0.3s ease;
 }
-
 .app-logo {
     color: var(--accent-primary);
     font-size: 1.6rem;
-    transition: color 0.3s ease;
 }
-
 .app-title {
     font-weight: 600;
     font-size: 1.1rem;
 }
-
 .toolbar-content {
     padding: 20px;
     overflow-y: auto;
 }
-
 .toolbar-title {
     color: var(--text-secondary);
     font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
     margin: 0 0 1rem 0;
 }
-
 .gate-palette {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -138,24 +91,22 @@ body {
 
 /* --- TOP BAR --- */
 .top-bar {
-    grid-row: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
-    transition:
-        background-color 0.3s ease,
-        border-color 0.3s ease;
 }
-
 .top-bar-section {
     display: flex;
     align-items: center;
     gap: 16px;
 }
-
+.circuit-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
 .qubit-controls {
     display: flex;
     align-items: center;
@@ -163,11 +114,11 @@ body {
     background-color: var(--bg-tertiary);
     padding: 6px;
     border-radius: 8px;
-    transition: background-color 0.3s ease;
 }
 .qubit-controls span {
     font-weight: 500;
     padding: 0 8px;
+    color: var(--text-secondary);
 }
 .qubit-controls button {
     background: var(--bg-secondary);
@@ -180,16 +131,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
 }
-.qubit-controls button:hover {
-    background: #363c44;
-    color: var(--text-primary);
-}
-[data-bs-theme="light"] .qubit-controls button:hover {
-    background: #d4d6d8;
-}
-
 .top-bar-button {
     display: flex;
     align-items: center;
@@ -201,31 +143,17 @@ body {
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
-    transition: all 0.2s ease;
 }
-
-.top-bar-button:hover {
-    background-color: #363c44;
-}
-
-[data-bs-theme="light"] .top-bar-button:hover {
-    background-color: #d4d6d8;
-}
-
-.top-bar-button.primary {
-    background-color: var(--accent-primary);
-    border-color: var(--accent-secondary);
+.top-bar-button.danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
     color: white;
-    font-size: 1rem;
 }
-.top-bar-button.primary:hover {
-    background-color: var(--accent-secondary);
+.top-bar-button.quantum {
+    background-color: #6610f2;
+    border-color: #6610f2;
+    color: white;
 }
-.top-bar-button.primary i {
-    font-size: 1.2rem;
-}
-
-/* --- Trash Can --- */
 .trash-bin {
     padding: 8px;
     width: 44px;
@@ -242,13 +170,9 @@ body {
     transform: scale(1);
 }
 .trash-bin.over {
-    background-color: var(--danger-color);
-    color: white;
-    border-color: var(--danger-color);
+    background-color: #c44a4a;
     transform: scale(1.1);
 }
-
-/* --- Theme Toggle Wrapper --- */
 .theme-toggle-wrapper {
     position: relative;
     width: 44px;
@@ -262,142 +186,407 @@ body {
     height: 100%;
 }
 
-/* --- MAIN CONTENT & CIRCUIT BOARD --- */
+/* --- CIRCUIT GRID & LINES --- */
 .main-content {
-    grid-row: 2;
     overflow: auto;
     padding: 2rem;
     background-image: radial-gradient(var(--bg-tertiary) 1px, transparent 1px);
     background-size: 20px 20px;
-    transition: background-image 0.3s ease;
 }
-
-.circuit-lane {
-    flex-grow: 1;
-    position: relative;
+.circuit-grid-container {
     display: flex;
-    align-items: center;
-    min-height: 60px;
-}
-
-.circuit-board {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
     min-width: fit-content;
 }
-
-.qubit-line-container {
+.qubit-labels {
+    display: flex;
+    flex-direction: column;
+}
+.qubit-label {
+    height: 60px; /* Cell height (50) + gap (10) */
     display: flex;
     align-items: center;
-    min-height: 60px;
-}
-
-.qubit-label {
+    justify-content: flex-end;
     color: var(--text-secondary);
     font-family: monospace;
     font-size: 1.1rem;
     width: 80px;
-    text-align: right;
     padding-right: 20px;
+    flex-shrink: 0;
 }
-
-.qubit-line {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    transform: translateY(-50%);
-    height: 2px;
-    background-color: var(--border-color);
-    transition: background-color 0.3s ease;
-    z-index: 0; /* Ensures the line is behind the gates */
-}
-
-/* --- Gate & Placeholder Layers --- */
-.gate-slots-wrapper {
+.circuit-render-area {
     position: relative;
+    padding: 5px 0;
+}
+.qubit-lines-container {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-}
-.placeholder-layer {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
     display: flex;
-    gap: 10px;
-    padding: 0 10px;
-    height: 60px;
-    align-items: center;
-    z-index: 1; /* Placeholders below gates */
+    flex-direction: column;
+    z-index: 0;
+    padding: 5px 0;
 }
-.gate-placeholder {
+.qubit-line {
+    height: 50px; /* Match cell height */
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 10px; /* Match grid gap */
+    box-sizing: border-box;
+}
+.circuit-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 10px;
+}
+.circuit-cell {
+    position: relative;
     width: 50px;
     height: 50px;
-    border-radius: 8px;
-    border: 2px dashed var(--border-color);
-    transition: all 0.2s ease;
-}
-.gate-placeholder.is-over {
-    border-color: var(--accent-primary);
-    background-color: rgba(88, 101, 242, 0.1);
 }
 
-.gate-slots {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-    z-index: 2; /* Gates above placeholders */
-    min-height: 60px;
-    padding: 0 10px;
-}
-
-/* --- SHARED GATE STYLES --- */
+/* --- GATE STYLES --- */
 .gate-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--border-color);
     border-radius: 8px;
     user-select: none;
     font-family: monospace;
     font-weight: bold;
     cursor: grab;
-    transition: all 0.2s ease;
+    width: 100%;
+    height: 100%;
+    border: none;
+    color: #ffffff;
 }
-
 .gate-item:active {
     cursor: grabbing;
 }
-
 .toolbar-gate {
     background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
     height: 50px;
 }
-.toolbar-gate:hover {
-    background-color: #363c44;
-    border-color: var(--text-secondary);
-}
-[data-bs-theme="light"] .toolbar-gate:hover {
-    background-color: #d4d6d8;
-}
-
 .circuit-gate {
-    width: 50px;
-    height: 50px;
-    background-color: var(--accent-primary);
-    border-color: var(--accent-secondary);
-    color: white;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-[data-bs-theme="light"] .circuit-gate {
-    color: var(--text-primary);
-}
-
 .overlay-gate {
     cursor: grabbing;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1);
+    transform: scale(1.05);
+}
+.gate-container {
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+}
+/* --- GATE STYLES (Theme-Aware) --- */
+.gate-item.gate-h {
+    background-color: #5dade2; /* Kept as a unique color */
+}
+.gate-item.gate-x {
+    background-color: var(--accent-primary); /* Use theme's primary accent */
+}
+.gate-item.gate-y {
+    background-color: #f5b041; /* Kept as a unique color */
+}
+.gate-item.gate-z {
+    background-color: var(--danger-color); /* Use theme's danger color */
+}
+.gate-item.gate-s {
+    background-color: #af7ac5; /* Kept as a unique color */
+}
+.gate-item.gate-t {
+    background-color: #f7dc6f;
+    color: #333;
+}
+/* Find and replace these rules in the GATE STYLES section */
+.gate-item.gate-cnot,
+.gate-item.gate-ccnot,
+.gate-item.gate-swap {
+    background-color: var(--gate-color-multi); /* Use the new theme variable */
+}
+.gate-item.gate-rx,
+.gate-item.gate-ry,
+.gate-item.gate-rz {
+    background-color: #884ea0; /* Kept as a unique color */
+}
+.gate-item.gate-measure {
+    background-color: #909497;
+    font-size: 1.5rem;
+}
+
+/* --- Drag Ghost --- */
+.gate-ghost {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    opacity: 0.4;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-weight: bold;
+    color: white;
+}
+
+/* --- Multi-Qubit Gate Styles --- */
+.multi-qubit-gate-container {
+    position: absolute;
+    width: 50px;
+    z-index: 10;
+}
+.multi-qubit-gate-container .gate-item {
+    height: 100%;
+    align-items: stretch;
+    padding: 10px 0;
+}
+.multi-qubit-gate-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.control-dot {
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.gate-line {
+    flex-grow: 1;
+    width: 3px;
+    background-color: white;
+}
+.target-symbol {
+    width: 24px;
+    height: 24px;
+    border: 3px solid white;
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.gate-swap .target-symbol {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+/* --- Other UI Elements --- */
+.circuit-management {
+    margin-top: 2rem;
+}
+.circuit-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+}
+.list-group-item.active {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+.simulation-results {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+}
+.simulation-results h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Add these new styles to your Dashboard.css --- */
+
+/* A subtle highlight for ALL empty cells when dragging from the toolbar */
+.circuit-cell.available-spot {
+    background-color: rgba(88, 101, 242, 0.05);
+    border: 1px dashed rgba(88, 101, 242, 0.2);
+}
+
+/* The semi-transparent "ghost" preview of the gate in the hovered cell */
+.gate-ghost {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    opacity: 0.5;
+    border-radius: 8px;
+    box-sizing: border-box; /* Ensures border is inside the element */
+}
+
+/* Green highlight for a VALID drop location */
+.circuit-cell.valid-drop {
+    background-color: rgba(88, 214, 141, 0.25);
+}
+.circuit-cell.valid-drop .gate-ghost {
+    border: 2px solid #58d68d;
+}
+
+/* Red highlight for an INVALID drop location (e.g., an occupied cell) */
+.circuit-cell.invalid-drop {
+    background-color: rgba(236, 112, 99, 0.25);
+    cursor: not-allowed;
+}
+.circuit-cell.invalid-drop .gate-ghost {
+    border: 2px solid #ec7063;
+}
+
+/* --- NEW GATE STYLES --- */
+.gate-item.gate-rx,
+.gate-item.gate-ry,
+.gate-item.gate-rz {
+    background-color: #884ea0;
+}
+.gate-item.gate-ccnot {
+    background-color: #17a589;
+}
+.gate-item.gate-measure {
+    background-color: #909497;
+    font-size: 1.5rem;
+}
+.measurement-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+/* --- NEW PENDING GATE HIGHLIGHTS --- */
+.circuit-cell.control {
+    background-color: rgba(200, 200, 200, 0.2);
+}
+.circuit-cell.targetable-control {
+    background-color: rgba(88, 101, 242, 0.15);
+    border: 1px dashed rgba(88, 101, 242, 0.4);
+    cursor: copy;
+}
+.circuit-cell.targetable-target {
+    background-color: rgba(88, 214, 141, 0.15);
+    border: 1px dashed rgba(88, 214, 141, 0.4);
+    cursor: crosshair;
+}
+
+/* --- GATE EDIT MODAL STYLES --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+}
+.modal-dialog {
+    min-width: 400px;
+}
+.modal-content {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+.modal-header,
+.modal-footer {
+    border-color: var(--border-color);
+}
+
+/* --- Multi-Qubit Gate Styles --- */
+.multi-qubit-gate-container {
+    position: absolute;
+    width: 50px;
+    z-index: 10;
+}
+.multi-qubit-gate-container .gate-item {
+    height: 100%;
+    align-items: stretch;
+    padding: 10px 0;
+}
+.multi-qubit-gate-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.control-dot {
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.gate-line {
+    flex-grow: 1;
+    width: 3px;
+    background-color: white;
+}
+.target-symbol {
+    width: 24px;
+    height: 24px;
+    border: 3px solid white;
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.gate-swap .target-symbol {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+/* --- NEW STYLES FOR MULTI-QUBIT GATE PARTS --- */
+
+.gate-part-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.multi-qubit-connector-line {
+    position: absolute;
+    width: 3px;
+    background-color: var(--accent-primary);
+    z-index: 1;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Make sure control/target symbols appear on top of the line */
+.control-dot,
+.target-symbol {
+    position: relative;
+    z-index: 2;
+    background-color: var(--bg-secondary);
+    /* BG color to punch out the qubit line */
+}
+/* Hide the part of the line extending before the first element */
+.multi-qubit-line.first {
+    height: 50%;
+    bottom: 0;
+}
+
+/* Hide the part of the line extending after the last element */
+.multi-qubit-line.last {
+    height: 50%;
+    top: 0;
 }
