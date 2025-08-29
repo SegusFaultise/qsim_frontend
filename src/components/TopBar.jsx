@@ -15,15 +15,26 @@ function TopBar({
   theme,
   toggleTheme,
 }) {
+  const trashBinClasses = [
+    "btn",
+    "btn-danger",
+    "btn--icon",
+    "header__trash-bin",
+    isDragging && "header__trash-bin--active",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <header className="top-bar">
-      <div className="top-bar-section">
-        <h4 className="circuit-title">{currentCircuitName}</h4>
+    <header className="header">
+      <div className="header__section">
+        <h4 className="header__circuit-title">{currentCircuitName}</h4>
       </div>
-      <div className="top-bar-section top-bar-right">
-        <div className="qubit-controls">
+      <div className="header__section">
+        <div className="header__qubit-controls">
           <span>Qubits: {numQubits}</span>
           <button
+            className="btn btn-secondary btn-sm btn--icon"
             onClick={onRemoveQubit}
             disabled={isLoading || numQubits <= 1}
             title="Remove Qubit"
@@ -31,6 +42,7 @@ function TopBar({
             <i className="bi bi-dash"></i>
           </button>
           <button
+            className="btn btn-secondary btn-sm btn--icon"
             onClick={onAddQubit}
             disabled={isLoading || numQubits >= 8}
             title="Add Qubit"
@@ -39,28 +51,29 @@ function TopBar({
           </button>
         </div>
         <button
-          className="top-bar-button danger"
+          className="btn btn-danger"
           onClick={onClearCircuit}
           disabled={isLoading}
         >
           <i className="bi bi-trash"></i>
-          <span className="text-label">Clear</span>
+          <span className="d-none d-md-inline ms-2">Clear</span>
         </button>
         <button
-          className="top-bar-button quantum"
+          className="btn btn-primary"
           onClick={onRunSimulation}
           disabled={isLoading || !currentCircuitId}
         >
           <i className="bi bi-play-circle"></i>
-          <span className="text-label">Run</span>
+          <span className="d-none d-md-inline ms-2">Run</span>
         </button>
-        <button className="top-bar-button" onClick={onLogout} title="Logout">
+        <button
+          className="btn btn-outline-secondary"
+          onClick={onLogout}
+          title="Logout"
+        >
           <i className="bi bi-box-arrow-right"></i>
-          <span className="text-label">Logout</span>
         </button>
-        <div className="theme-toggle-wrapper">
-          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-        </div>
+        <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
       </div>
     </header>
   );

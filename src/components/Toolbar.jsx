@@ -1,7 +1,7 @@
 import React from "react";
 import { DraggableGate } from "./GateComponents";
 
-// NEW: Expanded the list of gates
+// A list of available quantum gates for the toolbar
 const AVAILABLE_GATES = [
   { id: "h", name: "H" },
   { id: "x", name: "X" },
@@ -9,13 +9,13 @@ const AVAILABLE_GATES = [
   { id: "z", name: "Z" },
   { id: "s", name: "S" },
   { id: "t", name: "T" },
-  { id: "rx", name: "Rx(θ)", isParametric: true }, // NEW
-  { id: "ry", name: "Ry(θ)", isParametric: true }, // NEW
-  { id: "rz", name: "Rz(θ)", isParametric: true }, // NEW
-  { id: "cnot", name: "CNOT", controlCount: 1, targetCount: 1 }, // Updated
-  { id: "swap", name: "SWAP", controlCount: 1, targetCount: 1 }, // Updated
-  { id: "ccnot", name: "CCNOT", controlCount: 2, targetCount: 1 }, // NEW
-  { id: "measure", name: "Measure", isMeasurement: true }, // NEW
+  { id: "rx", name: "Rx(θ)", isParametric: true },
+  { id: "ry", name: "Ry(θ)", isParametric: true },
+  { id: "rz", name: "Rz(θ)", isParametric: true },
+  { id: "cnot", name: "CNOT", controlCount: 1, targetCount: 1 },
+  { id: "swap", name: "SWAP", controlCount: 1, targetCount: 1 },
+  { id: "ccnot", name: "CCNOT", controlCount: 2, targetCount: 1 },
+  { id: "measure", name: "Measure", isMeasurement: true },
 ];
 
 function Toolbar({
@@ -27,24 +27,28 @@ function Toolbar({
   onNewCircuit,
 }) {
   return (
-    <aside className="toolbar">
-      <div className="toolbar-header">
-        <i className="bi bi-globe app-logo"></i>
-        <span className="app-title">qism</span>
+    <aside className="sidebar">
+      <div className="sidebar__header">
+        <i className="bi bi-globe sidebar__logo"></i>
+        <span className="sidebar__title">qism</span>
       </div>
-      <div className="toolbar-content">
-        <h5 className="toolbar-title">Gates</h5>
-        <div className="gate-palette">
+      <div className="sidebar__content">
+        <h5 className="sidebar__section-title">Gates</h5>
+        <div className="sidebar__gate-palette">
           {AVAILABLE_GATES.map((gate) => (
             <DraggableGate key={gate.id} gate={gate} />
           ))}
         </div>
-        <div className="circuit-management">
-          <h5 className="toolbar-title">My Circuits</h5>
+        <div className="circuit-management mt-4">
+          <h5 className="sidebar__section-title">My Circuits</h5>
           {isLoading ? (
-            <div className="loading">Loading...</div>
+            <div className="d-flex justify-content-center">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
           ) : (
-            <ul className="list-group circuit-list">
+            <ul className="list-group">
               {userCircuits.map((c) => (
                 <li
                   key={c.id}
@@ -52,6 +56,7 @@ function Toolbar({
                     currentCircuitId === c.id ? "active" : ""
                   }`}
                   onClick={() => onLoadCircuit(c.id)}
+                  style={{ cursor: "pointer" }}
                 >
                   {c.name}
                 </li>

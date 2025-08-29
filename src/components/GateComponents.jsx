@@ -3,39 +3,22 @@ import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-export function Gate({ name, id, isMulti, span = 1 }) {
-  const gateClass = `gate-${id?.toLowerCase()}`;
-  const style = isMulti
-    ? { height: `calc(${span * 50}px + ${(span - 1) * 10}px)` }
-    : {};
-  return (
-    <div
-      className={`gate-item circuit-gate overlay-gate ${gateClass}`}
-      style={style}
-    >
-      {isMulti ? (
-        <div className="multi-qubit-gate-body">
-          <div className="control-dot" />
-          <div className="gate-line" />
-          <div className="target-symbol">{id === "cnot" ? "⊕" : "✕"}</div>
-        </div>
-      ) : (
-        name
-      )}
-    </div>
-  );
+// For the DragOverlay
+export function Gate({ name, id }) {
+  const gateClass = `gate--${id?.toLowerCase()}`;
+  return <div className={`gate ${gateClass}`}>{name}</div>;
 }
 
-// NEW: Passed the full gate object instead of id/name separately
+// For the sidebar
 export function DraggableGate({ gate }) {
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: `toolbar-${gate.id}`,
     data: { isToolbarGate: true, gateInfo: gate },
   });
-  const gateClass = `gate-${gate.id.toLowerCase()}`;
+  const gateClass = `gate--${gate.id.toLowerCase()}`;
   return (
     <div
-      className={`gate-item toolbar-gate ${gateClass}`}
+      className={`gate gate--toolbar ${gateClass}`}
       ref={setNodeRef}
       {...listeners}
       {...attributes}
@@ -46,10 +29,11 @@ export function DraggableGate({ gate }) {
   );
 }
 
+// For the main grid cells
 export function DroppableCell({
   id,
-  qubitIndex, // Ensure this prop is accepted
-  columnIndex, // Ensure this prop is accepted
+  qubitIndex,
+  columnIndex,
   children,
   pendingStatus,
   isAvailable,
@@ -57,7 +41,6 @@ export function DroppableCell({
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id,
-    // THIS DATA OBJECT IS THE CRITICAL FIX:
     data: {
       isCell: true,
       qubitIndex,
@@ -66,11 +49,15 @@ export function DroppableCell({
   });
   const { active } = useDndContext();
   const showGhost = isOver && !children && active;
+
   const classNames = [
-    "circuit-cell",
-    pendingStatus,
-    isAvailable && "available-spot",
-    showGhost && (!!children ? "invalid-drop" : "valid-drop"),
+    "circuit-grid__cell",
+    pendingStatus && `circuit-grid__cell--${pendingStatus}`,
+    isAvailable && "circuit-grid__cell--available",
+    showGhost &&
+      (children
+        ? "circuit-grid__cell--invalid-drop"
+        : "circuit-grid__cell--valid-drop"),
   ]
     .filter(Boolean)
     .join(" ");
@@ -80,14 +67,14 @@ export function DroppableCell({
       {children}
       {showGhost && (
         <div
-          className={`gate-ghost gate-${active.data.current.gateInfo.id.toLowerCase()}`}
+          className={`gate gate--ghost gate--${active.data.current.gateInfo.id.toLowerCase()}`}
         />
       )}
     </div>
   );
 }
 
-// In GateComponents.jsx, replace the MultiQubitGate function
+// Renders a complete multi-qubit gate
 export function MultiQubitGate({ gate, onContextMenu, onDoubleClick }) {
   const {
     attributes,
@@ -107,46 +94,48 @@ export function MultiQubitGate({ gate, onContextMenu, onDoubleClick }) {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 10 : 10, // Ensure it's above the line
   };
 
-  const gateClass = `gate-${gate.gateType.toLowerCase()}`;
-  const allQubits = [...gate.controlQubits, gate.targetQubit].sort(
-    (a, b) => a - b,
-  );
+  const gateClass = `gate--${gate.gateType.toLowerCase()}`;
+
+  const getTargetSymbol = () => {
+    switch (gate.gateType) {
+      case "cnot":
+      case "ccnot":
+        return "⊕";
+      case "swap":
+        return "✕";
+      default:
+        return "";
+    }
+  };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      // The class names are now directly on the main container
-      className={`multi-qubit-gate-container gate-item ${gateClass}`}
+      className="multi-qubit-gate"
       onContextMenu={(e) => onContextMenu(e, gate.id)}
-      onDoubleClick={() => onDoubleClick(gate)}
     >
-      <div className="multi-qubit-gate-body-flex">
+      <div className={`multi-qubit-gate__connector ${gateClass}`}></div>
+      <div className="multi-qubit-gate__body">
         {Array.from({ length: gate.span }).map((_, i) => {
           const currentQubit = gate.startRow - 1 + i;
           const isControl = gate.controlQubits.includes(currentQubit);
           const isTarget = gate.targetQubit === currentQubit;
-          const isLast = currentQubit === Math.max(...allQubits);
-          const isFirst = currentQubit === Math.min(...allQubits);
 
           return (
-            <div key={i} className="multi-qubit-lane">
-              <div
-                className={`multi-qubit-line ${isFirst ? "first" : ""} ${isLast ? "last" : ""}`}
-              />
-              {isControl && <div className="control-dot" />}
-              {isTarget && (
-                <div className="target-symbol">
-                  {gate.gateType === "cnot" || gate.gateType === "ccnot"
-                    ? "⊕"
-                    : "✕"}
-                </div>
-              )}
+            <div
+              key={currentQubit}
+              {...(isTarget ? { ...attributes, ...listeners } : {})}
+              onDoubleClick={() => onDoubleClick(gate)}
+              className={`multi-qubit-gate__part ${
+                isTarget ? "multi-qubit-gate__part--target" : ""
+              } ${isControl ? "multi-qubit-gate__part--control" : ""}`}
+            >
+              <div className="gate-symbol">
+                {isTarget ? getTargetSymbol() : null}
+              </div>
             </div>
           );
         })}
@@ -154,7 +143,8 @@ export function MultiQubitGate({ gate, onContextMenu, onDoubleClick }) {
     </div>
   );
 }
-// Replace the existing SingleQubitGate function with this one
+
+// Renders a single-qubit gate
 export function SingleQubitGate({ gate, onContextMenu, onDoubleClick }) {
   const {
     attributes,
@@ -164,7 +154,7 @@ export function SingleQubitGate({ gate, onContextMenu, onDoubleClick }) {
     transform,
     transition,
   } = useSortable({
-    id: gate.instanceId, // CRITICAL FIX: Use the gate's unique ID, not its position
+    id: gate.instanceId,
     data: { isCircuitGate: true, gateInfo: gate },
   });
 
@@ -172,9 +162,8 @@ export function SingleQubitGate({ gate, onContextMenu, onDoubleClick }) {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 100 : 2,
   };
-  const gateClass = `gate-${gate.id.toLowerCase()}`;
+  const gateClass = `gate--${gate.id.toLowerCase()}`;
 
   const formatParams = (params) => {
     if (!params) return "";
@@ -198,17 +187,13 @@ export function SingleQubitGate({ gate, onContextMenu, onDoubleClick }) {
       onContextMenu={(e) => onContextMenu(e, gate.instanceId)}
       onDoubleClick={() => onDoubleClick(gate)}
     >
-      <div className={`gate-item circuit-gate ${gateClass}`}>
+      <div className={`gate gate--circuit ${gateClass}`}>
         {gate.isMeasurement ? (
-          <i className="bi bi-speedometer2 measurement-icon"></i>
+          <i className="bi bi-speedometer2"></i>
         ) : (
           gateDisplayName
         )}
       </div>
     </div>
   );
-}
-
-export function TrashBin({ isDragging }) {
-  // ... (No changes needed here)
 }

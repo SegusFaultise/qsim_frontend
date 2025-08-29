@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-// NEW: A modal component for editing the parameters of a gate.
 function GateEditModal({ gate, isOpen, onClose, onSave }) {
   const [params, setParams] = useState({});
 
   useEffect(() => {
-    // Initialize state with the gate's current parameters when it opens
     if (gate && gate.parameters) {
       setParams(gate.parameters);
     } else {
-      // Default for new gates
       setParams({ theta: 0 });
     }
   }, [gate, isOpen]);
@@ -30,7 +27,7 @@ function GateEditModal({ gate, isOpen, onClose, onSave }) {
       return (
         <div className="mb-3">
           <label htmlFor="theta" className="form-label">
-            Angle θ (radians)
+            Rotation Angle θ (in radians)
           </label>
           <input
             type="number"
@@ -39,18 +36,20 @@ function GateEditModal({ gate, isOpen, onClose, onSave }) {
             id="theta"
             value={params.theta || 0}
             onChange={(e) => handleParamChange("theta", e.target.value)}
+            autoFocus
           />
-          <div className="form-text">Common values: π/2 ≈ 1.57, π ≈ 3.14</div>
+          <div className="form-text">
+            Common values: π/2 ≈ 1.57, π ≈ 3.14, 2π ≈ 6.28
+          </div>
         </div>
       );
     }
-    // Add other parametric gates here in the future
-    return <p>This gate has no parameters to edit.</p>;
+    return <p>This gate has no editable parameters.</p>;
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-dialog">
+    <div className="modal fade show" style={{ display: "block" }} tabIndex="-1">
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="modal-header">
@@ -59,6 +58,7 @@ function GateEditModal({ gate, isOpen, onClose, onSave }) {
                 type="button"
                 className="btn-close"
                 onClick={onClose}
+                aria-label="Close"
               ></button>
             </div>
             <div className="modal-body">{renderInputs()}</div>

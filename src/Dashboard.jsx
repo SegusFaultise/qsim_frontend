@@ -15,10 +15,9 @@ import "./Dashboard.css";
 import Toolbar from "./components/Toolbar";
 import TopBar from "./components/TopBar";
 import CircuitGrid from "./components/CircuitGrid";
-import SimulationResults from "./components/SimulationResults";
 import { Gate } from "./components/GateComponents";
-import GateEditModal from "./components/GateEditModal"; // NEW: Import the modal
-import BottomBar from "./components/BottomBar"; // Add this import
+import GateEditModal from "./components/GateEditModal";
+import BottomBar from "./components/BottomBar";
 
 const createEmptyCircuit = (qubits, steps) =>
   Array.from({ length: qubits }, () => Array(steps).fill(null));
@@ -46,14 +45,11 @@ function Dashboard({ theme, toggleTheme }) {
   const [currentCircuitName, setCurrentCircuitName] =
     useState("Untitled Circuit");
 
-  // NEW: State for the gate edit modal
   const [editingGate, setEditingGate] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
   const [activeTab, setActiveTab] = useState(null);
 
   const handleTabClick = (tabName) => {
-    // If the clicked tab is already active, collapse the bar. Otherwise, open it.
     setActiveTab((prevTab) => (prevTab === tabName ? null : tabName));
   };
 
@@ -68,7 +64,6 @@ function Dashboard({ theme, toggleTheme }) {
       setUserCircuits(circuits);
     } catch (error) {
       console.error("Failed to load circuits:", error);
-      alert("Failed to load your circuits");
     } finally {
       setIsLoading(false);
     }
@@ -87,9 +82,8 @@ function Dashboard({ theme, toggleTheme }) {
       const gatesToSave = [];
       const processedInstanceIds = new Set();
 
-      for (let c = 0; c < numSteps; c++) {
-        for (let q = 0; q < numQubits; q++) {
-          const gate = circuit[q][c];
+      circuit.forEach((row, q) => {
+        row.forEach((gate, c) => {
           if (
             gate &&
             gate.instanceId &&
@@ -97,15 +91,13 @@ function Dashboard({ theme, toggleTheme }) {
           ) {
             processedInstanceIds.add(gate.instanceId);
 
-            // Handle multi-qubit gates
             if (gate.controlCount > 0) {
               const parts = [];
-              for (let q2 = 0; q2 < numQubits; q2++) {
-                const part = circuit[q2][c];
-                if (part?.instanceId === gate.instanceId) {
-                  parts.push({ qubit: q2, role: part.role });
+              circuit.forEach((r, q2) => {
+                if (r[c]?.instanceId === gate.instanceId) {
+                  parts.push({ qubit: q2, role: r[c].role });
                 }
-              }
+              });
               const controlQubits = parts
                 .filter((p) => p.role === "control")
                 .map((p) => p.qubit);
@@ -123,18 +115,17 @@ function Dashboard({ theme, toggleTheme }) {
                 });
               }
             } else {
-              // Handle single-qubit gates
               gatesToSave.push({
                 gate: gate.id,
                 time: c,
-                controls: [], // Always include controls list
+                controls: [],
                 targets: [q],
                 parameters: gate.parameters || {},
               });
             }
           }
-        }
-      }
+        });
+      });
 
       const circuitData = {
         name: circuitName,
@@ -150,13 +141,11 @@ function Dashboard({ theme, toggleTheme }) {
       }
       setCurrentCircuitName(circuitName);
       await loadUserCircuits();
-      alert("Circuit saved successfully!");
     } catch (error) {
       console.error(
         "Failed to save circuit:",
         error.response?.data || error.message,
       );
-      alert("Failed to save circuit");
     } finally {
       setIsLoading(false);
     }
@@ -166,49 +155,40 @@ function Dashboard({ theme, toggleTheme }) {
     try {
       setIsLoading(true);
       const circuitData = await circuitsApi.getCircuit(circuitId);
-      const newNumQubits = circuitData.qubits;
+      const { qubits, gates } = circuitData;
 
-      // Determine the number of steps needed
-      const maxTime = circuitData.gates.reduce(
-        (max, g) => Math.max(max, g.time),
-        0,
-      );
+      const maxTime = gates.reduce((max, g) => Math.max(max, g.time), 0);
       const newNumSteps = Math.max(25, maxTime + 15);
+      let newCircuit = createEmptyCircuit(qubits, newNumSteps);
 
-      let newCircuit = createEmptyCircuit(newNumQubits, newNumSteps);
-
-      circuitData.gates.forEach((apiGate) => {
-        const columnIndex = apiGate.time;
+      gates.forEach((apiGate) => {
+        const { time, controls, targets, gate: gateId, parameters } = apiGate;
         const instanceId = nanoid();
         const gateInfo = {
-          id: apiGate.gate,
-          name: apiGate.gate.toUpperCase(), // Basic name
-          parameters: apiGate.parameters,
-          // You may need to fetch full gate info from a local AVAILABLE_GATES list
+          id: gateId,
+          name: gateId.toUpperCase(),
+          parameters,
+          controlCount: controls.length,
+          isParametric: ["rx", "ry", "rz"].includes(gateId),
         };
 
-        // Place all control parts
-        apiGate.controls.forEach((controlQubit) => {
-          newCircuit[controlQubit][columnIndex] = {
+        controls.forEach((controlQubit) => {
+          newCircuit[controlQubit][time] = {
             ...gateInfo,
             instanceId,
             role: "control",
-            controlCount: apiGate.controls.length, // Pass this for rendering logic
           };
         });
-
-        // Place all target parts
-        apiGate.targets.forEach((targetQubit) => {
-          newCircuit[targetQubit][columnIndex] = {
+        targets.forEach((targetQubit) => {
+          newCircuit[targetQubit][time] = {
             ...gateInfo,
             instanceId,
             role: "target",
-            controlCount: apiGate.controls.length,
           };
         });
       });
 
-      setNumQubits(newNumQubits);
+      setNumQubits(qubits);
       setNumSteps(newNumSteps);
       setCircuit(newCircuit);
       setCurrentCircuitId(circuitId);
@@ -216,11 +196,11 @@ function Dashboard({ theme, toggleTheme }) {
       setSimulationResult(null);
     } catch (error) {
       console.error("Failed to load circuit:", error);
-      alert("Failed to load circuit");
     } finally {
       setIsLoading(false);
     }
   };
+
   const runSimulation = async () => {
     if (!currentCircuitId) {
       alert("Please save your circuit before simulating.");
@@ -230,13 +210,9 @@ function Dashboard({ theme, toggleTheme }) {
       setIsLoading(true);
       setSimulationResult(null);
       const response = await simulationApi.startSimulation(currentCircuitId);
-      alert(
-        `Simulation started! Job ID: ${response.job_id}. Results will appear shortly.`,
-      );
       setTimeout(() => checkSimulationResult(response.job_id), 3000);
     } catch (error) {
       console.error("Failed to start simulation:", error);
-      alert("Failed to start simulation.");
     } finally {
       setIsLoading(false);
     }
@@ -254,7 +230,6 @@ function Dashboard({ theme, toggleTheme }) {
       }
     } catch (error) {
       console.error("Failed to get simulation result:", error);
-      alert("Failed to retrieve simulation results.");
     }
   };
 
@@ -293,16 +268,6 @@ function Dashboard({ theme, toggleTheme }) {
     }
   };
 
-  const expandCircuitIfNeeded = (columnIndex) => {
-    if (numSteps - columnIndex < 5) {
-      const newSteps = numSteps + 10;
-      setCircuit((prev) =>
-        prev.map((row) => [...row, ...Array(10).fill(null)]),
-      );
-      setNumSteps(newSteps);
-    }
-  };
-
   const handleContextMenu = (event, gateId) => {
     event.preventDefault();
     setMenuState({ show: true, x: event.clientX, y: event.clientY, gateId });
@@ -317,7 +282,6 @@ function Dashboard({ theme, toggleTheme }) {
     );
   };
 
-  // NEW: Handlers for the gate edit modal
   const handleGateDoubleClick = (gate) => {
     if (gate.isParametric) {
       setEditingGate(gate);
@@ -340,7 +304,6 @@ function Dashboard({ theme, toggleTheme }) {
     setEditingGate(null);
   };
 
-  // NEW: Updated cell click logic for multi-control gates
   const handleCellClick = (qubitIndex, columnIndex) => {
     if (!pendingGate || pendingGate.columnIndex !== columnIndex) return;
 
@@ -348,22 +311,14 @@ function Dashboard({ theme, toggleTheme }) {
     const isOccupied = circuit[qubitIndex][columnIndex] !== null;
     const isControl = controlQubits.includes(qubitIndex);
 
-    // If we are still selecting controls
     if (controlQubits.length < gate.controlCount) {
-      if (isOccupied || isControl) {
-        alert("Invalid control: Must be an empty cell on a different qubit.");
-        return;
-      }
+      if (isOccupied || isControl) return;
       setPendingGate((prev) => ({
         ...prev,
         controlQubits: [...prev.controlQubits, qubitIndex],
       }));
     } else {
-      // We are selecting the target
-      if (isOccupied || isControl) {
-        alert("Invalid target: Must be an empty cell on a different qubit.");
-        return;
-      }
+      if (isOccupied || isControl) return;
       const instanceId = nanoid();
       setCircuit((prev) => {
         const newCircuit = prev.map((r) => [...r]);
@@ -385,54 +340,31 @@ function Dashboard({ theme, toggleTheme }) {
 
   const cancelPendingGate = useCallback(() => {
     if (!pendingGate) return;
-
-    // Remove the temporary control dots from the circuit
     setCircuit((prev) => {
       const newCircuit = prev.map((r) => [...r]);
       pendingGate.controlQubits.forEach((q) => {
-        // Check to ensure we are removing the correct pending gate
         if (newCircuit[q][pendingGate.columnIndex]?.role === "control") {
           newCircuit[q][pendingGate.columnIndex] = null;
         }
       });
       return newCircuit;
     });
-
     setPendingGate(null);
-  }, [pendingGate]); // Add pendingGate to dependency array
+  }, [pendingGate, circuit]);
 
   useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key === "Escape") cancelPendingGate();
-    };
-    const handleClickOutside = (e) => {
-      if (
-        pendingGate &&
-        !e.target.closest(".circuit-render-area, .gate-item")
-      ) {
-        cancelPendingGate();
-      }
-    };
+    const handleKeyPress = (e) => e.key === "Escape" && cancelPendingGate();
     window.addEventListener("keydown", handleKeyPress);
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [cancelPendingGate, pendingGate]);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [cancelPendingGate]);
 
   const handleDragStart = (event) => {
     setIsDragging(true);
-    const { active } = event;
-    if (
-      active.data.current?.isToolbarGate ||
-      active.data.current?.isCircuitGate
-    ) {
-      setActiveGate(active.data.current.gateInfo);
+    if (event.active.data.current?.gateInfo) {
+      setActiveGate(event.active.data.current.gateInfo);
     }
   };
 
-  // NEW: Heavily updated drag end logic
   const handleDragEnd = (event) => {
     setIsDragging(false);
     setActiveGate(null);
@@ -442,10 +374,7 @@ function Dashboard({ theme, toggleTheme }) {
     if (pendingGate) cancelPendingGate();
 
     if (over.id === "trash-bin" && active.data.current?.isCircuitGate) {
-      handleDelete(
-        active.data.current.gateInfo.instanceId ||
-          active.data.current.gateInfo.id,
-      );
+      handleDelete(active.data.current.gateInfo.instanceId);
       return;
     }
 
@@ -453,38 +382,35 @@ function Dashboard({ theme, toggleTheme }) {
 
     const { qubitIndex: targetQubit, columnIndex: targetColumn } =
       over.data.current;
-    const gateInfo = active.data.current?.gateInfo;
-    const isToolbarGate = active.data.current?.isToolbarGate;
+    const gateInfo = active.data.current.gateInfo;
 
-    // --- LOGIC FOR PLACING A NEW GATE FROM THE TOOLBAR ---
-    if (isToolbarGate) {
-      if (circuit[targetQubit][targetColumn] !== null) {
-        alert("Target cell is already occupied.");
-        return;
-      }
-
-      // Check for expansion before setting state
-      if (numSteps - targetColumn < 5) {
+    const expandCircuitIfNeeded = (col) => {
+      if (numSteps - col < 5) {
         const newSteps = numSteps + 10;
         setCircuit((prev) =>
           prev.map((row) => [...row, ...Array(10).fill(null)]),
         );
         setNumSteps(newSteps);
       }
+    };
+
+    if (active.data.current.isToolbarGate) {
+      if (circuit[targetQubit][targetColumn]) return;
+      expandCircuitIfNeeded(targetColumn);
 
       const instanceId = nanoid();
       const newGate = { ...gateInfo, instanceId };
 
       if (newGate.isParametric) {
-        setEditingGate(newGate);
+        setEditingGate({ ...newGate, parameters: { theta: 0 } });
         setIsEditModalOpen(true);
         setCircuit((prev) => {
-          const newCircuit = prev.map((r) => [...r]);
-          newCircuit[targetQubit][targetColumn] = {
+          const next = prev.map((r) => [...r]);
+          next[targetQubit][targetColumn] = {
             ...newGate,
             parameters: { theta: 0 },
           };
-          return newCircuit;
+          return next;
         });
       } else if (newGate.controlCount > 0) {
         setPendingGate({
@@ -493,93 +419,64 @@ function Dashboard({ theme, toggleTheme }) {
           columnIndex: targetColumn,
         });
         setCircuit((prev) => {
-          const newCircuit = prev.map((r) => [...r]);
-          newCircuit[targetQubit][targetColumn] = {
-            ...newGate,
-            role: "control",
-          };
-          return newCircuit;
+          const next = prev.map((r) => [...r]);
+          next[targetQubit][targetColumn] = { ...newGate, role: "control" };
+          return next;
         });
       } else {
         setCircuit((prev) => {
-          const newCircuit = prev.map((r) => [...r]);
-          newCircuit[targetQubit][targetColumn] = newGate;
-          return newCircuit;
+          const next = prev.map((r) => [...r]);
+          next[targetQubit][targetColumn] = newGate;
+          return next;
         });
       }
-
-      // --- LOGIC FOR MOVING AN EXISTING GATE ON THE CIRCUIT ---
-    } else if (active.data.current?.isCircuitGate) {
-      const instanceId = gateInfo.instanceId || gateInfo.id;
-
-      setCircuit((prevCircuit) => {
+    } else if (active.data.current.isCircuitGate) {
+      const { instanceId } = gateInfo;
+      setCircuit((prev) => {
         const sourceParts = [];
-        prevCircuit.forEach((row, q) =>
+        prev.forEach((row, q) =>
           row.forEach((g, c) => {
             if (g?.instanceId === instanceId)
               sourceParts.push({ q, c, gate: g });
           }),
         );
 
-        if (sourceParts.length === 0) return prevCircuit;
+        if (!sourceParts.length) return prev;
 
-        const sourceControlPart =
+        const sourceControl =
           sourceParts.find((p) => p.gate.role === "control") || sourceParts[0];
-        const qubitOffset = targetQubit - sourceControlPart.q;
-        const columnOffset = targetColumn - sourceControlPart.c;
+        const qOffset = targetQubit - sourceControl.q;
+        const cOffset = targetColumn - sourceControl.c;
 
-        let finalCircuit = prevCircuit;
-        let currentNumSteps = numSteps;
+        const newPositions = sourceParts.map((p) => ({
+          q: p.q + qOffset,
+          c: p.c + cOffset,
+        }));
 
-        // 1. Check if expansion is needed and expand if necessary
-        const maxTargetColumn = Math.max(
-          ...sourceParts.map((p) => p.c + columnOffset),
+        const maxCol = Math.max(...newPositions.map((p) => p.c));
+        if (numSteps - maxCol < 5) expandCircuitIfNeeded(maxCol);
+
+        const isValidMove = newPositions.every(
+          ({ q, c }) =>
+            q >= 0 &&
+            q < numQubits &&
+            c >= 0 &&
+            c < numSteps &&
+            (!prev[q][c] || prev[q][c].instanceId === instanceId),
         );
-        if (currentNumSteps - maxTargetColumn < 5) {
-          const newSteps = currentNumSteps + 10;
-          finalCircuit = finalCircuit.map((row) => [
-            ...row,
-            ...Array(10).fill(null),
-          ]);
-          setNumSteps(newSteps); // Update numSteps state separately
-          currentNumSteps = newSteps;
-        }
 
-        // 2. Perform validity check on the (potentially expanded) circuit
-        let isMoveValid = true;
-        for (const part of sourceParts) {
-          const newQubit = part.q + qubitOffset;
-          const newColumn = part.c + columnOffset;
-          if (
-            newQubit < 0 ||
-            newQubit >= numQubits ||
-            newColumn < 0 ||
-            newColumn >= currentNumSteps ||
-            (finalCircuit[newQubit][newColumn] &&
-              finalCircuit[newQubit][newColumn].instanceId !== instanceId)
-          ) {
-            isMoveValid = false;
-            break;
-          }
-        }
+        if (!isValidMove) return prev;
 
-        if (!isMoveValid) {
-          alert("Cannot move gate here, path is obstructed or out of bounds.");
-          return prevCircuit; // Return original state if move is invalid
-        }
-
-        // 3. If valid, perform the move
-        const newCircuit = finalCircuit.map((r) => [...r]);
-        sourceParts.forEach((p) => {
-          newCircuit[p.q][p.c] = null; // Clear old positions
+        const next = prev.map((r) => [...r]);
+        sourceParts.forEach(({ q, c }) => {
+          next[q][c] = null;
         });
-        sourceParts.forEach((part) => {
-          const newQubit = part.q + qubitOffset;
-          const newColumn = part.c + columnOffset;
-          newCircuit[newQubit][newColumn] = part.gate; // Set new positions
+        sourceParts.forEach(({ gate }, i) => {
+          const { q, c } = newPositions[i];
+          next[q][c] = gate;
         });
 
-        return newCircuit;
+        return next;
       });
     }
   };
@@ -592,8 +489,16 @@ function Dashboard({ theme, toggleTheme }) {
     >
       <div
         className="app-layout"
-        onClick={() => setMenuState({ ...menuState, show: false })}
+        onClick={() =>
+          menuState.show && setMenuState({ ...menuState, show: false })
+        }
       >
+        <div className="animated-background">
+          <div className="stars"></div>
+          <div className="stars2"></div>
+          <div className="stars3"></div>
+        </div>
+
         <Toolbar
           userCircuits={userCircuits}
           isLoading={isLoading}
@@ -602,8 +507,9 @@ function Dashboard({ theme, toggleTheme }) {
           onSaveCircuit={saveCircuit}
           onNewCircuit={handleNewCircuit}
         />
+
         <div
-          className={`main-container ${activeTab ? "has-results-open" : ""}`}
+          className={`main-container ${activeTab ? "main-container--results-open" : ""}`}
         >
           <TopBar
             currentCircuitName={currentCircuitName}
@@ -630,32 +536,26 @@ function Dashboard({ theme, toggleTheme }) {
               onGateDoubleClick={handleGateDoubleClick}
             />
           </main>
-          {/* The BottomBar is now a permanent part of the layout */}
           <BottomBar
             simulationResult={simulationResult}
             activeTab={activeTab}
-            onTabClick={handleTabClick} // Use the new handler
+            onTabClick={handleTabClick}
             onRunSimulation={runSimulation}
           />
         </div>
+
         <DragOverlay>
-          {activeGate && (
-            <Gate
-              name={activeGate.name || activeGate.gateType?.toUpperCase()}
-              id={activeGate.id || activeGate.gateType}
-              isMulti={!!activeGate.span}
-              span={activeGate.span}
-            />
-          )}
+          {activeGate && <Gate name={activeGate.name} id={activeGate.id} />}
         </DragOverlay>
       </div>
+
       <ContextMenu
         show={menuState.show}
         x={menuState.x}
         y={menuState.y}
         onDelete={() => {
           handleDelete(menuState.gateId);
-          setMenuState({ show: false });
+          setMenuState({ ...menuState, show: false });
         }}
       />
 

@@ -47,6 +47,7 @@ function CircuitGrid({
           const maxQubit = Math.max(...allInvolvedQubits);
 
           multiQubitGates.set(gate.instanceId, {
+            ...gate,
             id: gate.instanceId,
             gateType: gate.id,
             columnIndex: c_idx,
@@ -76,24 +77,25 @@ function CircuitGrid({
 
   return (
     <div className="circuit-grid-container">
-      <div className="qubit-labels">
+      <div className="circuit-grid__labels">
         {Array.from({ length: numQubits }).map((_, i) => (
-          <div key={i} className="qubit-label">
+          <div key={i} className="circuit-grid__label">
             q<sub>{i}</sub>: |0⟩
           </div>
         ))}
       </div>
-      <div className="circuit-render-area">
-        <div className="qubit-lines-container">
+      <div className="circuit-grid__render-area">
+        <div className="circuit-grid__lines">
           {Array.from({ length: numQubits }).map((_, i) => (
-            <div key={i} className="qubit-line" />
+            <div key={i} className="circuit-grid__line" />
           ))}
         </div>
         <div
           className="circuit-grid"
           style={{
-            gridTemplateColumns: `repeat(${numSteps}, 50px)`,
-            gridTemplateRows: `repeat(${numQubits}, 50px)`,
+            // This is the key change: `auto` lets columns resize based on their content.
+            gridTemplateColumns: `repeat(${numSteps}, auto)`,
+            gridTemplateRows: `repeat(${numQubits}, var(--gate-size))`,
           }}
         >
           {/* Render the full multi-qubit gates */}
@@ -112,7 +114,6 @@ function CircuitGrid({
           {circuit.map((row, q_idx) =>
             row.map((gate, c_idx) => {
               const cellId = `${q_idx}-${c_idx}`;
-              // If this cell is part of an already rendered multi-qubit gate, just render an empty droppable cell
               if (gate && renderedMultiGateIds.has(gate.instanceId)) {
                 return (
                   <DroppableCell

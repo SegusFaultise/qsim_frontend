@@ -4,20 +4,17 @@ import SimulationResults from "./SimulationResults";
 function BottomBar({
   simulationResult,
   activeTab,
-  onTabClick, // Changed from setActiveTab to onTabClick
+  onTabClick,
   onRunSimulation,
 }) {
   const renderTabContent = () => {
     if (!simulationResult) {
       return (
-        <div className="run-simulation-prompt">
+        <div className="bottom-bar__prompt">
           <h4>No results to display</h4>
-          <p>
-            Click the button below to run the simulation for the current
-            circuit.
-          </p>
+          <p>Run the simulation to see the measurement probabilities.</p>
           <button className="btn btn-primary btn-lg" onClick={onRunSimulation}>
-            <i className="bi bi-play-circle"></i> Run Simulation
+            <i className="bi bi-play-circle me-2"></i> Run Simulation
           </button>
         </div>
       );
@@ -40,35 +37,28 @@ function BottomBar({
 
   return (
     <div className="bottom-bar">
-      <ul className="nav nav-tabs">
-        <li className="nav-item">
-          <button
-            className={`nav-link ${activeTab === "probabilities" ? "active" : ""}`}
-            onClick={() => onTabClick("probabilities")}
-          >
-            Probabilities
-            {/* Conditionally render open/close icon */}
-            <i
-              className={`bi ${activeTab === "probabilities" ? "bi-chevron-up" : "bi-chevron-down"} tab-icon`}
-            ></i>
-          </button>
-        </li>
-        <li className="nav-item">
-          <button
-            className={`nav-link ${activeTab === "statistics" ? "active" : ""}`}
-            onClick={() => onTabClick("statistics")}
-          >
-            Statistics
-            {/* Conditionally render open/close icon */}
-            <i
-              className={`bi ${activeTab === "statistics" ? "bi-chevron-up" : "bi-chevron-down"} tab-icon`}
-            ></i>
-          </button>
-        </li>
-      </ul>
-      {/* The content area is only visible if a tab is active */}
+      <div className="bottom-bar__tabs">
+        <button
+          className={`bottom-bar__tab ${activeTab === "probabilities" ? "bottom-bar__tab--active" : ""}`}
+          onClick={() => onTabClick("probabilities")}
+        >
+          Probabilities
+          <i
+            className={`bi ${activeTab === "probabilities" ? "bi-chevron-up" : "bi-chevron-down"} ms-2`}
+          ></i>
+        </button>
+        <button
+          className={`bottom-bar__tab ${activeTab === "statistics" ? "bottom-bar__tab--active" : ""}`}
+          onClick={() => onTabClick("statistics")}
+        >
+          Statistics
+          <i
+            className={`bi ${activeTab === "statistics" ? "bi-chevron-up" : "bi-chevron-down"} ms-2`}
+          ></i>
+        </button>
+      </div>
       {activeTab && (
-        <div className="bottom-bar-content">{renderTabContent()}</div>
+        <div className="bottom-bar__content">{renderTabContent()}</div>
       )}
     </div>
   );
