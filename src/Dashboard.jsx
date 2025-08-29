@@ -18,6 +18,7 @@ import CircuitGrid from "./components/CircuitGrid";
 import SimulationResults from "./components/SimulationResults";
 import { Gate } from "./components/GateComponents";
 import GateEditModal from "./components/GateEditModal"; // NEW: Import the modal
+import BottomBar from "./components/BottomBar"; // Add this import
 
 const createEmptyCircuit = (qubits, steps) =>
   Array.from({ length: qubits }, () => Array(steps).fill(null));
@@ -48,6 +49,13 @@ function Dashboard({ theme, toggleTheme }) {
   // NEW: State for the gate edit modal
   const [editingGate, setEditingGate] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState(null);
+
+  const handleTabClick = (tabName) => {
+    // If the clicked tab is already active, collapse the bar. Otherwise, open it.
+    setActiveTab((prevTab) => (prevTab === tabName ? null : tabName));
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -594,7 +602,9 @@ function Dashboard({ theme, toggleTheme }) {
           onSaveCircuit={saveCircuit}
           onNewCircuit={handleNewCircuit}
         />
-        <div className="main-container">
+        <div
+          className={`main-container ${activeTab ? "has-results-open" : ""}`}
+        >
           <TopBar
             currentCircuitName={currentCircuitName}
             numQubits={numQubits}
@@ -619,10 +629,15 @@ function Dashboard({ theme, toggleTheme }) {
               onContextMenu={handleContextMenu}
               onGateDoubleClick={handleGateDoubleClick}
             />
-            <SimulationResults simulationResult={simulationResult} />
           </main>
+          {/* The BottomBar is now a permanent part of the layout */}
+          <BottomBar
+            simulationResult={simulationResult}
+            activeTab={activeTab}
+            onTabClick={handleTabClick} // Use the new handler
+            onRunSimulation={runSimulation}
+          />
         </div>
-
         <DragOverlay>
           {activeGate && (
             <Gate

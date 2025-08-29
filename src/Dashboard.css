@@ -590,3 +590,83 @@ body {
     height: 50%;
     top: 0;
 }
+
+.bottom-bar .nav-tabs {
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 1rem;
+    flex-shrink: 0;
+}
+
+.bottom-bar .nav-link {
+    color: var(--text-secondary);
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+
+.bottom-bar .nav-link.active {
+    color: var(--accent-primary);
+    background-color: transparent;
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.bottom-bar-content {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.main-container {
+    display: grid;
+    /* Default layout: TopBar, content, and a collapsed BottomBar (48px) */
+    grid-template-rows: 60px 1fr 48px;
+    height: 100vh;
+    overflow: hidden;
+    /* Add a smooth transition for the grid-template-rows property */
+    transition: grid-template-rows 0.3s ease-in-out;
+}
+
+/* When a tab is clicked, expand the third row to 350px */
+.main-container.has-results-open {
+    grid-template-rows: 60px 1fr 350px;
+}
+
+.bottom-bar {
+    grid-row: 3;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Hide content when collapsed */
+}
+
+/* Keep the rest of your .bottom-bar-* and .run-simulation-prompt styles as they are */
+/* Layout override when results ARE shown */
+.main-container.has-results {
+    /* 60px for TopBar, flexible space for circuit, 350px for BottomBar */
+    grid-template-rows: 60px 1fr 350px;
+}
+
+/* You can now DELETE the old .simulation-results style */
+.simulation-results {
+    /* This class is now inside the bottom bar, so we don't need margin/padding */
+    background-color: transparent;
+}
+
+/* Ensure the chart inside the bottom bar has some padding */
+.simulation-results h3 {
+    padding-top: 1.5rem;
+}
+
+.run-simulation-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+}
+
+.tab-icon {
+    margin-left: 8px;
+}
