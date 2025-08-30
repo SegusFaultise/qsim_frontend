@@ -1,20 +1,26 @@
 import React from "react";
-import ThemeToggle from "../ThemeToggle";
 
 function TopBar({
   currentCircuitName,
+  isEditingName,
+  onNameEdit,
+  onNameChange,
+  onNameSave,
+  onNameKeyPress,
+  nameInputRef,
   numQubits,
   isDragging,
   isLoading,
   simulationStatus,
   currentCircuitId,
+  isCircuitSaved,
+  hasUnsavedChanges,
   onRemoveQubit,
   onAddQubit,
   onClearCircuit,
   onRunSimulation,
+  onSaveCircuit,
   onLogout,
-  theme,
-  toggleTheme,
 }) {
   const trashBinClasses = [
     "btn",
@@ -26,10 +32,51 @@ function TopBar({
     .filter(Boolean)
     .join(" ");
 
+  // Determine if save button should be disabled
+  const isSaveDisabled = isLoading || (isCircuitSaved && !hasUnsavedChanges);
+
+  // Determine if run button should be disabled
+  const isRunDisabled =
+    isLoading || simulationStatus === "running" || numQubits === 0;
+
   return (
     <header className="header">
       <div className="header__section">
-        <h4 className="header__circuit-title">{currentCircuitName}</h4>
+        {isEditingName ? (
+          <input
+            ref={nameInputRef}
+            type="text"
+            className="header__circuit-title-input"
+            value={currentCircuitName}
+            onChange={onNameChange}
+            onBlur={onNameSave}
+            onKeyPress={onNameKeyPress}
+            maxLength={50}
+          />
+        ) : (
+          <div className="header__title-container">
+            <h4
+              className="header__circuit-title"
+              onClick={onNameEdit}
+              title="Click to edit name"
+            >
+              {currentCircuitName}
+            </h4>
+            <button
+              className="btn btn-sm btn-outline-secondary ms-2"
+              onClick={onNameEdit}
+              title="Edit circuit name"
+            >
+              <i className="bi bi-pencil"></i>
+            </button>
+          </div>
+        )}
+        {/* Add save indicator */}
+        {hasUnsavedChanges && (
+          <span className="badge bg-warning ms-2" title="Unsaved changes">
+            Unsaved
+          </span>
+        )}
       </div>
       <div className="header__section">
         <div className="header__qubit-controls">
@@ -51,10 +98,26 @@ function TopBar({
             <i className="bi bi-plus"></i>
           </button>
         </div>
+
+        {/* Save Circuit Button */}
+        <button
+          className="btn btn-outline-primary"
+          onClick={onSaveCircuit}
+          disabled={isSaveDisabled}
+          title={isSaveDisabled ? "No changes to save" : "Save Circuit"}
+        >
+          <i
+            className={`bi ${isCircuitSaved && !hasUnsavedChanges ? "bi-check" : "bi-save"}`}
+          ></i>
+          <span className="d-none d-md-inline ms-2">
+            {isCircuitSaved && !hasUnsavedChanges ? "Saved" : "Save"}
+          </span>
+        </button>
+
         <button
           className="btn btn-danger"
           onClick={onClearCircuit}
-          disabled={isLoading}
+          disabled={isLoading || numQubits === 0}
         >
           <i className="bi bi-trash"></i>
           <span className="d-none d-md-inline ms-2">Clear</span>
@@ -64,11 +127,9 @@ function TopBar({
         <button
           className={`running-button ${simulationStatus === "running" ? "active" : ""}`}
           onClick={onRunSimulation}
-          disabled={
-            isLoading || simulationStatus === "running" || !currentCircuitId
-          }
+          disabled={isRunDisabled}
         >
-          <span>Run Simulation</span>
+          <span>Run</span>
           <div className="running">
             <div className="outer">
               <div className="body">
@@ -88,7 +149,6 @@ function TopBar({
         >
           <i className="bi bi-box-arrow-right"></i>
         </button>
-        <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
       </div>
     </header>
   );

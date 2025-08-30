@@ -19,16 +19,13 @@ const AVAILABLE_GATES = [
   { id: "measure", name: "Measure", isMeasurement: true },
 ];
 
-function Toolbar({
-  // Remove userCircuits, isLoading, currentCircuitId, onLoadCircuit props
-  onSaveCircuit,
-  onNewCircuit,
-  onOpenBrowser, // Add a new prop for opening the modal
-}) {
+function Toolbar({ onNewCircuit, onOpenBrowser }) {
   return (
     <aside className="sidebar">
       <div className="sidebar__header">
-        <i className="bi bi-globe sidebar__logo"></i>
+        <i className="sidebar__logo">
+          <img src="/qism.svg" alt="Bootstrap" />
+        </i>
         <span className="sidebar__title">qism</span>
       </div>
       <div className="sidebar__content">
@@ -40,20 +37,17 @@ function Toolbar({
         </div>
         <div className="circuit-management mt-4">
           <h5 className="sidebar__section-title">My Circuits</h5>
-          {/* Replace the circuit list with buttons */}
           <div className="d-grid gap-2 mt-3">
             <button className="btn btn-secondary btn-sm" onClick={onNewCircuit}>
               <i className="bi bi-file-earmark-plus"></i> New Circuit
             </button>
             <button
               className="btn btn-secondary btn-sm"
-              onClick={onOpenBrowser} // New button to open the modal
+              onClick={onOpenBrowser}
             >
               <i className="bi bi-folder2-open"></i> Open Circuit
             </button>
-            <button className="btn btn-primary btn-sm" onClick={onSaveCircuit}>
-              <i className="bi bi-save"></i> {/* This logic remains the same */}
-            </button>
+            {/* Save button removed from here */}
           </div>
         </div>
       </div>

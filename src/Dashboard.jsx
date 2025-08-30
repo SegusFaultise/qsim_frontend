@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "./context/AuthContext";
 import { nanoid } from "nanoid";
 import {
@@ -18,8 +18,9 @@ import CircuitGrid from "./components/CircuitGrid";
 import { Gate } from "./components/GateComponents";
 import GateEditModal from "./components/GateEditModal";
 import BottomBar from "./components/BottomBar";
-import CircuitBrowserModal from "./components/CircuitBrowserModal"; // NEW IMPORT
-import SimulationStatus from "./components/SimulationStatus"; // NEW IMPORT
+import CircuitBrowserModal from "./components/CircuitBrowserModal";
+import SimulationStatus from "./components/SimulationStatus";
+import SavePromptModal from "./components/SavePromptModal";
 
 const createEmptyCircuit = (qubits, steps) =>
   Array.from({ length: qubits }, () => Array(steps).fill(null));
@@ -53,8 +54,90 @@ function Dashboard({ theme, toggleTheme }) {
 
   const [isBrowserModalOpen, setIsBrowserModalOpen] = useState(false);
 
-  const [simulationStatus, setSimulationStatus] = useState(null); // 'running', 'completed', 'error'
+  const [simulationStatus, setSimulationStatus] = useState(null);
   const [simulationJobId, setSimulationJobId] = useState(null);
+
+  const [showSavePrompt, setShowSavePrompt] = useState(false);
+  const [isCircuitSaved, setIsCircuitSaved] = useState(true);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Add these state variables
+  const [isEditingName, setIsEditingName] = useState(false);
+  const nameInputRef = useRef(null);
+
+  // Function to handle name editing
+  const handleNameEdit = () => {
+    setIsEditingName(true);
+    // Focus the input field after a small delay to ensure it's rendered
+    setTimeout(() => {
+      if (nameInputRef.current) {
+        nameInputRef.current.focus();
+        nameInputRef.current.select();
+      }
+    }, 10);
+  };
+
+  // Function to handle name change
+  const handleNameChange = (e) => {
+    setCurrentCircuitName(e.target.value);
+    setHasUnsavedChanges(true);
+    setIsCircuitSaved(false);
+  };
+
+  // Function to save the name when user presses Enter or clicks away
+  const handleNameSave = () => {
+    setIsEditingName(false);
+    // Name is already updated in state, no need for additional action
+  };
+
+  // Function to handle key press in name input
+  const handleNameKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleNameSave();
+    } else if (e.key === "Escape") {
+      setIsEditingName(false);
+    }
+  };
+
+  // Function to handle circuit changes (mark as unsaved)
+  const handleCircuitChange = useCallback(() => {
+    setIsCircuitSaved(false);
+    setHasUnsavedChanges(true);
+  }, []);
+
+  // Function to handle run simulation with save prompt
+  const handleRunWithSavePrompt = () => {
+    if (!isCircuitSaved) {
+      setShowSavePrompt(true);
+    } else {
+      runSimulation();
+    }
+  };
+
+  // Function to handle saving and running
+  const handleSaveAndRun = async () => {
+    setShowSavePrompt(false);
+    const success = await handleSaveCircuit();
+    if (success) {
+      runSimulation();
+    }
+  };
+
+  // Function to handle running without saving
+  const handleRunWithoutSave = () => {
+    setShowSavePrompt(false);
+    runSimulation();
+  };
+
+  // Function to handle successful save
+  const handleSaveCircuit = async () => {
+    const success = await saveCircuit();
+    if (success) {
+      setIsCircuitSaved(true);
+      setHasUnsavedChanges(false);
+    }
+    return success;
+  };
 
   const handleTabClick = (tabName) => {
     setActiveTab((prevTab) => (prevTab === tabName ? null : tabName));
@@ -81,8 +164,11 @@ function Dashboard({ theme, toggleTheme }) {
   }, []);
 
   const saveCircuit = async () => {
-    const circuitName = prompt("Enter circuit name:", currentCircuitName);
-    if (!circuitName) return;
+    // Remove the prompt and use the current circuit name
+    if (!currentCircuitName.trim()) {
+      alert("Please enter a circuit name");
+      return false;
+    }
 
     try {
       setIsLoading(true);
@@ -135,7 +221,7 @@ function Dashboard({ theme, toggleTheme }) {
       });
 
       const circuitData = {
-        name: circuitName,
+        name: currentCircuitName.trim(), // Use the current name
         qubits: numQubits,
         gates: gatesToSave,
       };
@@ -146,13 +232,15 @@ function Dashboard({ theme, toggleTheme }) {
         const response = await circuitsApi.createCircuit(circuitData);
         setCurrentCircuitId(response.id);
       }
-      setCurrentCircuitName(circuitName);
+      setCurrentCircuitName(currentCircuitName.trim());
       await loadUserCircuits();
+      return true;
     } catch (error) {
       console.error(
         "Failed to save circuit:",
         error.response?.data || error.message,
       );
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -201,16 +289,18 @@ function Dashboard({ theme, toggleTheme }) {
       setCurrentCircuitId(circuitId);
       setCurrentCircuitName(circuitData.name);
       setSimulationResult(null);
+      setIsCircuitSaved(true);
+      setHasUnsavedChanges(false);
+      setIsEditingName(false);
     } catch (error) {
       console.error("Failed to load circuit:", error);
     } finally {
       setIsLoading(false);
     }
 
-    setIsBrowserModalOpen(false); // NEW
+    setIsBrowserModalOpen(false);
   };
 
-  // In Dashboard.jsx, update the runSimulation function:
   const runSimulation = async () => {
     if (!currentCircuitId) {
       alert("Please save your circuit before simulating.");
@@ -220,7 +310,7 @@ function Dashboard({ theme, toggleTheme }) {
       setIsLoading(true);
       setSimulationStatus("running");
       setSimulationResult(null);
-      setActiveTab("results"); // Auto-expand the results tab
+      setActiveTab("probabilities");
       const response = await simulationApi.startSimulation(currentCircuitId);
       setSimulationJobId(response.job_id);
       setTimeout(() => checkSimulationResult(response.job_id), 3000);
@@ -250,6 +340,7 @@ function Dashboard({ theme, toggleTheme }) {
       setSimulationJobId(null);
     }
   };
+
   const handleNewCircuit = () => {
     const defaultQubits = 3;
     const defaultSteps = 25;
@@ -261,17 +352,24 @@ function Dashboard({ theme, toggleTheme }) {
     setSimulationResult(null);
     setPendingGate(null);
     setEditingGate(null);
+    setIsCircuitSaved(false);
+    setHasUnsavedChanges(true);
+    setIsEditingName(false);
   };
 
   const clearCircuit = () => {
     setCircuit(createEmptyCircuit(numQubits, numSteps));
     setPendingGate(null);
+    setIsCircuitSaved(false);
+    setHasUnsavedChanges(true);
   };
 
   const addQubit = () => {
     if (numQubits < 8) {
       setCircuit((prev) => [...prev, Array(numSteps).fill(null)]);
       setNumQubits(numQubits + 1);
+      setIsCircuitSaved(false);
+      setHasUnsavedChanges(true);
     }
   };
 
@@ -282,6 +380,8 @@ function Dashboard({ theme, toggleTheme }) {
       }
       setCircuit((prev) => prev.slice(0, -1));
       setNumQubits(numQubits - 1);
+      setIsCircuitSaved(false);
+      setHasUnsavedChanges(true);
     }
   };
 
@@ -297,6 +397,8 @@ function Dashboard({ theme, toggleTheme }) {
         row.map((cell) => (cell?.instanceId === instanceId ? null : cell)),
       ),
     );
+    setIsCircuitSaved(false);
+    setHasUnsavedChanges(true);
   };
 
   const handleGateDoubleClick = (gate) => {
@@ -319,6 +421,8 @@ function Dashboard({ theme, toggleTheme }) {
     );
     setIsEditModalOpen(false);
     setEditingGate(null);
+    setIsCircuitSaved(false);
+    setHasUnsavedChanges(true);
   };
 
   const handleCellClick = (qubitIndex, columnIndex) => {
@@ -352,6 +456,8 @@ function Dashboard({ theme, toggleTheme }) {
         return newCircuit;
       });
       setPendingGate(null);
+      setIsCircuitSaved(false);
+      setHasUnsavedChanges(true);
     }
   };
 
@@ -429,6 +535,8 @@ function Dashboard({ theme, toggleTheme }) {
           };
           return next;
         });
+        setIsCircuitSaved(false);
+        setHasUnsavedChanges(true);
       } else if (newGate.controlCount > 0) {
         setPendingGate({
           gate: newGate,
@@ -440,12 +548,16 @@ function Dashboard({ theme, toggleTheme }) {
           next[targetQubit][targetColumn] = { ...newGate, role: "control" };
           return next;
         });
+        setIsCircuitSaved(false);
+        setHasUnsavedChanges(true);
       } else {
         setCircuit((prev) => {
           const next = prev.map((r) => [...r]);
           next[targetQubit][targetColumn] = newGate;
           return next;
         });
+        setIsCircuitSaved(false);
+        setHasUnsavedChanges(true);
       }
     } else if (active.data.current.isCircuitGate) {
       const { instanceId } = gateInfo;
@@ -495,6 +607,8 @@ function Dashboard({ theme, toggleTheme }) {
 
         return next;
       });
+      setIsCircuitSaved(false);
+      setHasUnsavedChanges(true);
     }
   };
 
@@ -512,9 +626,8 @@ function Dashboard({ theme, toggleTheme }) {
         </div>
 
         <Toolbar
-          onSaveCircuit={saveCircuit}
           onNewCircuit={handleNewCircuit}
-          onOpenBrowser={() => setIsBrowserModalOpen(true)} // NEW prop
+          onOpenBrowser={() => setIsBrowserModalOpen(true)}
         />
 
         <div
@@ -522,18 +635,25 @@ function Dashboard({ theme, toggleTheme }) {
         >
           <TopBar
             currentCircuitName={currentCircuitName}
+            isEditingName={isEditingName}
+            onNameEdit={handleNameEdit}
+            onNameChange={handleNameChange}
+            onNameSave={handleNameSave}
+            onNameKeyPress={handleNameKeyPress}
+            nameInputRef={nameInputRef}
             numQubits={numQubits}
             isDragging={isDragging}
             isLoading={isLoading}
-            simulationStatus={simulationStatus} // Add this line
+            simulationStatus={simulationStatus}
             currentCircuitId={currentCircuitId}
+            isCircuitSaved={isCircuitSaved && !hasUnsavedChanges}
+            hasUnsavedChanges={hasUnsavedChanges}
             onRemoveQubit={removeQubit}
             onAddQubit={addQubit}
             onClearCircuit={clearCircuit}
-            onRunSimulation={runSimulation}
+            onRunSimulation={handleRunWithSavePrompt}
+            onSaveCircuit={handleSaveCircuit}
             onLogout={logout}
-            theme={theme}
-            toggleTheme={toggleTheme}
           />
           <main className="main-content">
             <CircuitGrid
@@ -548,10 +668,10 @@ function Dashboard({ theme, toggleTheme }) {
           </main>
           <BottomBar
             simulationResult={simulationResult}
-            simulationStatus={simulationStatus} // Add this line
+            simulationStatus={simulationStatus}
             activeTab={activeTab}
             onTabClick={handleTabClick}
-            onRunSimulation={runSimulation}
+            onRunSimulation={handleRunWithSavePrompt}
           />
         </div>
 
@@ -559,7 +679,6 @@ function Dashboard({ theme, toggleTheme }) {
           {activeGate && <Gate name={activeGate.name} id={activeGate.id} />}
         </DragOverlay>
       </div>
-
       <ContextMenu
         show={menuState.show}
         x={menuState.x}
@@ -569,14 +688,12 @@ function Dashboard({ theme, toggleTheme }) {
           setMenuState({ ...menuState, show: false });
         }}
       />
-
       <GateEditModal
         isOpen={isEditModalOpen}
         gate={editingGate}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleUpdateGateParameters}
       />
-
       <CircuitBrowserModal
         isOpen={isBrowserModalOpen}
         onClose={() => setIsBrowserModalOpen(false)}
@@ -585,9 +702,18 @@ function Dashboard({ theme, toggleTheme }) {
         currentCircuitId={currentCircuitId}
         onLoadCircuit={loadCircuit}
       />
-
-      {simulationStatus && (
-        <SimulationStatus status={simulationStatus} result={simulationResult} />
+      <SavePromptModal
+        isOpen={showSavePrompt}
+        circuitName={currentCircuitName}
+        onSave={handleSaveAndRun}
+        onRunWithoutSave={handleRunWithoutSave}
+        onCancel={() => setShowSavePrompt(false)}
+      />
+      {simulationStatus === "running" && activeTab !== "probabilities" && (
+        <div className="simulation-status-mini">
+          <div className="mini-spinner"></div>
+          <span>Simulation running...</span>
+        </div>
       )}
     </DndContext>
   );
