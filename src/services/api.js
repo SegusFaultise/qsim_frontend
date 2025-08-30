@@ -1,7 +1,17 @@
 import { getAuthToken } from "./auth";
 
-const API_BASE_URL = "http://13.211.161.27:8080";
+const API_BASE_URL = "http://localhost:8000";
 
+/**
+ * <summary>
+ * A generic wrapper for making authenticated API requests using the Fetch API.
+ * It automatically includes the JWT token in the Authorization header.
+ * </summary>
+ * <param name="endpoint" type="string">The API endpoint to call (e.g., '/api/v1/circuits/').</param>
+ * <param name="options" type="object">Standard Fetch API options object (e.g., method, body, headers).</param>
+ * <returns type="Promise<object>">A promise that resolves to the JSON response from the API.</returns>
+ * <exception cref="Error">Throws an error if the network response is not OK, including details from the API if available.</exception>
+ */
 async function apiRequest(endpoint, options = {}) {
   const token = getAuthToken();
 
@@ -27,22 +37,38 @@ async function apiRequest(endpoint, options = {}) {
   return response.json();
 }
 
-// Circuits API
+/**
+ * <summary>
+ * An object containing methods for interacting with the circuits API endpoints.
+ * </summary>
+ */
 export const circuitsApi = {
-  // Get all user circuits
+  /**
+   * <summary>Fetches all circuits belonging to the authenticated user.</summary>
+   */
   getUserCircuits: () => apiRequest("/api/v1/circuits/"),
 
-  // Get circuit by ID
+  /**
+   * <summary>Fetches a specific circuit by its unique ID.</summary>
+   * <param name="circuitId" type="string|number">The ID of the circuit to retrieve.</param>
+   */
   getCircuit: (circuitId) => apiRequest(`/api/v1/circuits/${circuitId}`),
 
-  // Create new circuit
+  /**
+   * <summary>Creates a new circuit with the provided data.</summary>
+   * <param name="circuitData" type="object">The data for the new circuit (e.g., name, circuit state).</param>
+   */
   createCircuit: (circuitData) =>
     apiRequest("/api/v1/circuits/", {
       method: "POST",
       body: JSON.stringify(circuitData),
     }),
 
-  // Update circuit
+  /**
+   * <summary>Updates an existing circuit with new data.</summary>
+   * <param name="circuitId" type="string|number">The ID of the circuit to update.</param>
+   * <param name="circuitData" type="object">The new data for the circuit.</param>
+   */
   updateCircuit: (circuitId, circuitData) =>
     apiRequest(`/api/v1/circuits/${circuitId}`, {
       method: "PUT",
@@ -50,14 +76,24 @@ export const circuitsApi = {
     }),
 };
 
-// Simulation API
+/**
+ * <summary>
+ * An object containing methods for interacting with the simulation API endpoints.
+ * </summary>
+ */
 export const simulationApi = {
-  // Start simulation
+  /**
+   * <summary>Starts a new simulation for a given circuit.</summary>
+   * <param name="circuitId" type="string|number">The ID of the circuit to simulate.</param>
+   */
   startSimulation: (circuitId) =>
     apiRequest(`/api/v1/circuits/${circuitId}/simulate`, {
       method: "POST",
     }),
 
-  // Get simulation result
+  /**
+   * <summary>Retrieves the results of a simulation using its job ID.</summary>
+   * <param name="jobId" type="string">The job ID returned from the startSimulation call.</param>
+   */
   getSimulationResult: (jobId) => apiRequest(`/api/v1/results/${jobId}`),
 };

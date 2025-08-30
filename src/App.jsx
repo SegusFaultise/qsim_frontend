@@ -4,6 +4,14 @@ import LoginPage from "./LoginPage";
 import Dashboard from "./Dashboard";
 import { Container } from "react-bootstrap";
 
+/**
+ * <summary>
+ * The root component of the application. It serves as the main entry point and handles
+ * top-level state management, including theme switching (dark/light) and conditional
+ * rendering of the LoginPage or Dashboard based on authentication status.
+ * </summary>
+ * <state name="theme" type="string">Manages the current theme ('dark' or 'light') and persists it to local storage.</state>
+ */
 function App() {
   const { isAuthenticated } = useAuth();
   const [theme, setTheme] = useState(

@@ -1,6 +1,17 @@
-// CircuitBrowserModal.jsx
 import React from "react";
 
+/**
+ * <summary>
+ * A modal dialog for browsing and loading a user's saved quantum circuits.
+ * It handles loading states, an empty state if no circuits are found, and lists the available circuits.
+ * </summary>
+ * <param name="isOpen" type="boolean">Controls whether the modal is visible.</param>
+ * <param name="onClose" type="function">Callback function to close the modal.</param>
+ * <param name="userCircuits" type="Array<object>">An array of the user's saved circuit objects.</param>
+ * <param name="isLoading" type="boolean">If true, a loading spinner is displayed instead of the circuit list.</param>
+ * <param name="currentCircuitId" type="string|number">The ID of the currently loaded circuit, used for highlighting.</param>
+ * <param name="onLoadCircuit" type="function">Callback function triggered when a user selects a circuit to load.</param>
+ */
 function CircuitBrowserModal({
   isOpen,
   onClose,

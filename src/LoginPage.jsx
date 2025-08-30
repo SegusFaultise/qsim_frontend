@@ -10,11 +10,22 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useAuth } from "./context/AuthContext";
-import ThemeToggle from "./ThemeToggle"; // Import the ThemeToggle component
-import { loginUser } from "./services/auth"; // Import the function
+import ThemeToggle from "./ThemeToggle";
+import { loginUser } from "./services/auth";
 import "./LoginPage.css";
 
-// Accept theme and toggleTheme as props
+/**
+ * <summary>
+ * Renders the application's login page, featuring an animated background and a form for user authentication.
+ * It manages form state, handles the login API call, and displays loading or error states.
+ * </summary>
+ * <param name="theme" type="string">The current application theme ('dark' or 'light').</param>
+ * <param name="toggleTheme" type="function">A callback function to switch the application theme.</param>
+ * <state name="username" type="string">Stores the value of the username input field.</state>
+ * <state name="password" type="string">Stores the value of the password input field.</state>
+ * <state name="error" type="string">Stores any error message received during the login attempt.</state>
+ * <state name="isLoading" type="boolean">A flag to indicate when the login request is in progress.</state>
+ */
 function LoginPage({ theme, toggleTheme }) {
   const { login } = useAuth();
   const [username, setUsername] = useState("");
@@ -27,7 +38,7 @@ function LoginPage({ theme, toggleTheme }) {
     setIsLoading(true);
     setError("");
     try {
-      const data = await loginUser({ username, password }); // Use the imported function
+      const data = await loginUser({ username, password });
       login(data.access_token);
     } catch (err) {
       setError(err.message);
@@ -38,7 +49,6 @@ function LoginPage({ theme, toggleTheme }) {
 
   return (
     <div className="login-container">
-      {/* Render the ThemeToggle component */}
       <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
 
       <div className="stars"></div>
@@ -46,7 +56,6 @@ function LoginPage({ theme, toggleTheme }) {
       <div className="stars3"></div>
 
       <div className="notation-bg">
-        {/* Notations for the background animation */}
         <span>|0⟩</span>
         <span>H</span>
         <span>|ψ⟩</span>

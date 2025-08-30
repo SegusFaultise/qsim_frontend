@@ -1,5 +1,13 @@
 import React from "react";
 
+/**
+ * <summary>
+ * Displays the current status of the quantum simulation, showing different
+ * animations and messages for 'running', 'completed', and 'error' states.
+ * </summary>
+ * <param name="status" type="string">The current status of the simulation (e.g., 'running', 'completed', 'error').</param>
+ * <param name="result" type="object">The result object from the simulation, which might be used in future extensions.</param>
+ */
 function SimulationStatus({ status, result }) {
   if (!status) return null;
 

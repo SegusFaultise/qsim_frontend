@@ -6,6 +6,19 @@ import {
   SingleQubitGate,
 } from "./GateComponents";
 
+/**
+ * <summary>
+ * Renders the interactive quantum circuit grid, displaying qubit lines, gates, and handling gate placement logic.
+ * This component is responsible for rendering both single and multi-qubit gates and showing placement previews.
+ * </summary>
+ * <param name="circuit" type="Array<Array<object>>">The 2D array representing the circuit's state, where each element is a gate object or null.</param>
+ * <param name="numQubits" type="number">The total number of qubits (rows) in the circuit.</param>
+ * <param name="numSteps" type="number">The total number of steps (columns) in the circuit.</param>
+ * <param name="pendingGate" type="object">An object representing a multi-qubit gate currently being placed by the user.</param>
+ * <param name="onCellClick" type="function">Callback function for when a user clicks on a grid cell.</param>
+ * <param name="onContextMenu" type="function">Callback function for when a user right-clicks on a gate.</param>
+ * <param name="onGateDoubleClick" type="function">Callback function for when a user double-clicks on a gate.</param>
+ */
 function CircuitGrid({
   circuit,
   numQubits,
@@ -21,7 +34,6 @@ function CircuitGrid({
   const multiQubitGates = new Map();
   const renderedMultiGateIds = new Set();
 
-  // Logic to find and prepare multi-qubit gates for rendering
   circuit.forEach((row, q_idx) => {
     row.forEach((gate, c_idx) => {
       if (
@@ -61,28 +73,19 @@ function CircuitGrid({
     });
   });
 
-  // MODIFIED: This function now only shows placement prompts on qubits BELOW the first control.
   const getPendingStatus = (q_idx, c_idx) => {
-    // No pending gate or not in the right column, do nothing.
     if (!pendingGate || pendingGate.columnIndex !== c_idx) {
       return null;
     }
 
-    // If the current cell is already an active control for this pending gate,
-    // it should be styled as a control part.
     if (pendingGate.controlQubits.includes(q_idx)) {
       return "control";
     }
 
-    // Now, determine if this cell should be a glowing prompt.
-    // A cell can only be a prompt if it's empty.
     if (!circuit[q_idx][c_idx]) {
-      // Get the qubit index of the first control that was placed.
       const firstControlQubit = pendingGate.controlQubits[0];
 
-      // The user wants prompts to ONLY appear on qubits BELOW the first one.
       if (q_idx > firstControlQubit) {
-        // Check if we are still selecting controls or if we need a target.
         if (
           pendingGate.controlQubits.length <
           (pendingGate.gate.controlCount || 1)
@@ -93,7 +96,6 @@ function CircuitGrid({
       }
     }
 
-    // Otherwise, it's not a valid spot.
     return null;
   };
 
@@ -118,7 +120,6 @@ function CircuitGrid({
             gridTemplateRows: `repeat(${numQubits}, var(--gate-size))`,
           }}
         >
-          {/* Render the full multi-qubit gates */}
           {Array.from(multiQubitGates.values()).map((gate) => {
             renderedMultiGateIds.add(gate.id);
             return (
@@ -130,11 +131,9 @@ function CircuitGrid({
               />
             );
           })}
-          {/* Render the grid cells and single-qubit gates */}
           {circuit.map((row, q_idx) =>
             row.map((gate, c_idx) => {
               const cellId = `${q_idx}-${c_idx}`;
-              // If this cell is part of an already rendered multi-qubit gate, just render an empty droppable cell
               if (gate && renderedMultiGateIds.has(gate.instanceId)) {
                 return (
                   <div

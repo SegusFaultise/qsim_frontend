@@ -1,20 +1,43 @@
-/* src/components/ContextMenu.css */
+/**
+ * <summary>
+ * Defines the styling for the main context menu container.
+ * </summary>
+ * <prop name="position" type="absolute">Allows the menu to be placed precisely relative to the viewport or a positioned ancestor.</prop>
+ * <prop name="background-color" type="color">Sets a dark background color for the menu.</prop>
+ * <prop name="border" type="string">Applies a subtle border to the menu.</prop>
+ * <prop name="box-shadow" type="string">Adds a drop shadow for a floating effect.</prop>
+ * <prop name="z-index" type="number">Ensures the menu appears on top of other page content.</prop>
+ */
 .context-menu {
     position: absolute;
-    background-color: #343a40; /* Dark background */
-    border: 1px solid #495057; /* Border color */
+    background-color: #343a40;
+    border: 1px solid #495057;
     border-radius: 0.25rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1050; /* Ensure it's on top of other content */
+    z-index: 1050;
 }
 
+/**
+ * <summary>
+ * Styles the individual items within the context menu.
+ * </summary>
+ * <prop name="background-color" type="color">Makes the item background transparent to inherit from the container.</prop>
+ * <prop name="color" type="color">Sets the text color to white for readability on a dark background.</prop>
+ * <prop name="cursor" type="string">Changes the mouse cursor to a pointer to indicate the item is clickable.</prop>
+ */
 .list-group-item {
     background-color: transparent;
-    color: #fff; /* White text */
+    color: #fff;
     border: none;
     cursor: pointer;
 }
 
+/**
+ * <summary>
+ * Defines the hover state for context menu items, providing visual feedback.
+ * </summary>
+ * <prop name="background-color" type="color">Slightly lightens the background when the user's mouse is over the item.</prop>
+ */
 .list-group-item:hover {
-    background-color: #495057; /* Lighter background on hover */
+    background-color: #495057;
 }

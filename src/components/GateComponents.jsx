@@ -3,13 +3,24 @@ import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-// For the DragOverlay
+/**
+ * <summary>
+ * A simple presentational component for displaying a gate, typically used within a DragOverlay.
+ * </summary>
+ * <param name="name" type="string">The display name of the gate (e.g., 'H').</param>
+ * <param name="id" type="string">The unique identifier for the gate type (e.g., 'h').</param>
+ */
 export function Gate({ name, id }) {
   const gateClass = `gate--${id?.toLowerCase()}`;
   return <div className={`gate ${gateClass}`}>{name}</div>;
 }
 
-// For the sidebar
+/**
+ * <summary>
+ * A draggable gate component intended for use in a sidebar or toolbar.
+ * </summary>
+ * <param name="gate" type="object">The gate object containing its id and name.</param>
+ */
 export function DraggableGate({ gate }) {
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: `toolbar-${gate.id}`,
@@ -29,7 +40,19 @@ export function DraggableGate({ gate }) {
   );
 }
 
-// For the main grid cells
+/**
+ * <summary>
+ * Represents a single droppable cell within the main circuit grid. It can contain a gate
+ * and displays visual feedback for drag-and-drop operations.
+ * </summary>
+ * <param name="id" type="string">A unique ID for the droppable area.</param>
+ * <param name="qubitIndex" type="number">The row (qubit) index of the cell in the grid.</param>
+ * <param name="columnIndex" type="number">The column (step) index of the cell in the grid.</param>
+ * <param name="children" type="React.ReactNode">Child elements, typically a SingleQubitGate, to render inside the cell.</param>
+ * <param name="pendingStatus" type="string">Visual status for placing a multi-qubit gate (e.g., 'control', 'targetable-target').</param>
+ * <param name="isAvailable" type="boolean">Indicates if the cell is a valid drop target for the current drag operation.</param>
+ * <param name="onClick" type="function">Callback function executed when the cell is clicked.</param>
+ */
 export function DroppableCell({
   id,
   qubitIndex,
@@ -74,7 +97,14 @@ export function DroppableCell({
   );
 }
 
-// Renders a complete multi-qubit gate
+/**
+ * <summary>
+ * Renders a multi-qubit gate that spans multiple rows within the circuit grid.
+ * </summary>
+ * <param name="gate" type="object">The gate data object, including its position, span, and qubit roles.</param>
+ * <param name="onContextMenu" type="function">Callback function for handling right-click events on the gate.</param>
+ * <param name="onDoubleClick" type="function">Callback function for handling double-click events on the gate.</param>
+ */
 export function MultiQubitGate({ gate, onContextMenu, onDoubleClick }) {
   const {
     attributes,
@@ -144,7 +174,14 @@ export function MultiQubitGate({ gate, onContextMenu, onDoubleClick }) {
   );
 }
 
-// Renders a single-qubit gate
+/**
+ * <summary>
+ * Renders a single-qubit gate within a DroppableCell in the circuit grid.
+ * </summary>
+ * <param name="gate" type="object">The gate data object, including its type, parameters, and position.</param>
+ * <param name="onContextMenu" type="function">Callback function for handling right-click events on the gate.</param>
+ * <param name="onDoubleClick" type="function">Callback function for handling double-click events on the gate.</param>
+ */
 export function SingleQubitGate({ gate, onContextMenu, onDoubleClick }) {
   const {
     attributes,

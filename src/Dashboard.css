@@ -1,19 +1,15 @@
-/**
- * Quantum Circuit Dashboard Stylesheet
- *
- * @version 2.6.0
- * @author Pro Front-End Developer
- * @date 2025-08-30
- *
- * Cleaned and organized version
- */
-
 /* ==========================================================================
    IMPORTS & VARIABLES
    ========================================================================== */
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap");
 
+/**
+ * <summary>
+ * Defines global CSS custom properties (variables) for the entire application,
+ * including typography, spacing, colors, and component dimensions. It also
+ * overrides default Bootstrap 5 variables for a consistent dark theme.
+ * </summary>
+ */
 :root {
     /* --- Typography --- */
     --font-family-sans:
@@ -92,6 +88,12 @@
     --bs-list-group-border-color: var(--border-color);
 }
 
+/**
+ * <summary>
+ * Overrides the default dark theme variables to provide a light theme option
+ * when this data attribute is present on an element.
+ * </summary>
+ */
 [data-bs-theme="light"] {
     /* --- Glassmorphism Theme (Light Mode) --- */
     --bg-glass-primary: rgba(255, 255, 255, 0.7);
@@ -118,13 +120,18 @@
 /* ==========================================================================
    BASE STYLES
    ========================================================================== */
-
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
 
+/**
+ * <summary>
+ * Sets foundational styles for the document body, including default typography,
+ * background color, and disables page-level scrolling.
+ * </summary>
+ */
 body {
     margin: 0;
     font-family: var(--bs-font-sans-serif);
@@ -135,21 +142,22 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
+/**
+ * <summary>
+ * Provides custom styling for browser scrollbars for a more integrated look.
+ * </summary>
+ */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
-
 ::-webkit-scrollbar-track {
     background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
     background: var(--bg-glass-tertiary);
     border-radius: var(--border-radius-md);
 }
-
 ::-webkit-scrollbar-thumb:hover {
     background: var(--border-color);
 }
@@ -157,7 +165,12 @@ body {
 /* ==========================================================================
    ANIMATED BACKGROUND
    ========================================================================== */
-
+/**
+ * <summary>
+ * Creates a full-screen, fixed-position animated background with a radial
+ * gradient that slowly pulses.
+ * </summary>
+ */
 .animated-background {
     position: fixed;
     top: 0;
@@ -176,7 +189,6 @@ body {
     background-size: 200% 200%;
     animation: hypnotic-pulse 25s ease-in-out infinite;
 }
-
 [data-bs-theme="light"] .animated-background {
     background: radial-gradient(
         circle,
@@ -186,7 +198,6 @@ body {
         #ffffff 100%
     );
 }
-
 @keyframes hypnotic-pulse {
     0% {
         background-position: 50% 0%;
@@ -199,6 +210,12 @@ body {
     }
 }
 
+/**
+ * <summary>
+ * Generates multiple layers of animated starfields for a parallax effect,
+ * each with a different speed and density.
+ * </summary>
+ */
 .stars,
 .stars2,
 .stars3 {
@@ -211,25 +228,21 @@ body {
     background-size: cover;
     animation: pan-stars 60s linear infinite;
 }
-
 .stars {
     background-image: radial-gradient(1px 1px at 25px 25px, white, transparent);
     background-size: 50px 50px;
     animation-duration: 60s;
 }
-
 .stars2 {
     background-image: radial-gradient(1px 1px at 10px 10px, white, transparent);
     background-size: 40px 40px;
     animation-duration: 120s;
 }
-
 .stars3 {
     background-image: radial-gradient(1px 1px at 40px 40px, white, transparent);
     background-size: 80px 80px;
     animation-duration: 180s;
 }
-
 @keyframes pan-stars {
     from {
         transform: translateY(0);
@@ -242,7 +255,12 @@ body {
 /* ==========================================================================
    APP LAYOUT
    ========================================================================== */
-
+/**
+ * <summary>
+ * Defines the main two-column grid layout for the application, separating
+ * the sidebar from the main content.
+ * </summary>
+ */
 .app-layout {
     display: grid;
     grid-template-columns: var(--sidebar-width) 1fr;
@@ -250,6 +268,12 @@ body {
     position: relative;
 }
 
+/**
+ * <summary>
+ * Establishes the three-row layout for the main content area, consisting
+ * of the header, content, and bottom bar.
+ * </summary>
+ */
 .main-container {
     display: grid;
     grid-template-rows: var(--header-height) 1fr var(
@@ -259,7 +283,6 @@ body {
     overflow: hidden;
     transition: grid-template-rows 0.3s ease-in-out;
 }
-
 .main-container--results-open {
     grid-template-rows: var(--header-height) 1fr var(
             --bottom-bar-height-expanded
@@ -279,7 +302,12 @@ body {
 /* ==========================================================================
    GLASSMORPHISM PANELS
    ========================================================================== */
-
+/**
+ * <summary>
+ * Applies the core glassmorphism effect (semi-transparent background with
+ * a blur) to the primary UI panels.
+ * </summary>
+ */
 .sidebar,
 .header,
 .bottom-bar {
@@ -289,13 +317,11 @@ body {
     border-color: var(--border-color);
     transition: all 0.5s ease;
 }
-
 .sidebar {
     border-right: var(--border-width) solid var(--border-color);
     display: flex;
     flex-direction: column;
 }
-
 .header {
     border-bottom: var(--border-width) solid var(--border-color);
     display: flex;
@@ -303,14 +329,12 @@ body {
     align-items: center;
     padding: 0 var(--spacing-xl);
 }
-
 .bottom-bar {
     border-top: var(--border-width) solid var(--border-color);
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
-
 .bottom-bar__content {
     position: relative;
     z-index: 2;
@@ -319,7 +343,6 @@ body {
 /* ==========================================================================
    SIDEBAR STYLES
    ========================================================================== */
-
 .sidebar__header {
     display: flex;
     align-items: center;
@@ -329,22 +352,18 @@ body {
     border-bottom: var(--border-width) solid var(--border-color);
     flex-shrink: 0;
 }
-
 .sidebar__logo {
     color: var(--accent-primary);
     font-size: 1.8rem;
 }
-
 .sidebar__title {
     font-weight: 600;
     font-size: 1.1rem;
 }
-
 .sidebar__content {
     padding: var(--spacing-xl);
     overflow-y: auto;
 }
-
 .sidebar__section-title {
     color: var(--text-secondary);
     font-size: 0.8rem;
@@ -354,6 +373,11 @@ body {
     margin: 0 0 var(--spacing-lg) 0;
 }
 
+/**
+ * <summary>
+ * Defines the grid layout for the draggable quantum gates in the sidebar.
+ * </summary>
+ */
 .sidebar__gate-palette {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--gate-size), 1fr));
@@ -363,18 +387,15 @@ body {
 /* ==========================================================================
    HEADER STYLES
    ========================================================================== */
-
 .header__section {
     display: flex;
     align-items: center;
     gap: var(--spacing-lg);
 }
-
 .header__circuit-title {
     font-size: 1.25rem;
     font-weight: 500;
 }
-
 .header__qubit-controls {
     display: flex;
     align-items: center;
@@ -383,26 +404,22 @@ body {
     padding: var(--spacing-xs);
     border-radius: var(--border-radius-md);
 }
-
 .header__qubit-controls span {
     font-weight: 500;
     padding: 0 var(--spacing-sm);
     color: var(--text-secondary);
 }
-
 .header__trash-bin {
     opacity: 0;
     visibility: hidden;
     transform: scale(0.8);
     transition: all var(--transition-short);
 }
-
 .header__trash-bin--active {
     opacity: 1;
     visibility: visible;
     transform: scale(1);
 }
-
 .header__trash-bin--over {
     transform: scale(1.1);
     box-shadow: 0 0 0 4px var(--danger-primary);
@@ -411,14 +428,12 @@ body {
 /* ==========================================================================
    BOTTOM BAR STYLES
    ========================================================================== */
-
 .bottom-bar__tabs {
     border-bottom: var(--border-width) solid var(--border-color);
     padding: 0 var(--spacing-lg);
     flex-shrink: 0;
     display: flex;
 }
-
 .bottom-bar__tab {
     color: var(--text-secondary);
     padding: var(--spacing-md) var(--spacing-lg);
@@ -434,22 +449,18 @@ body {
         color var(--transition-short),
         border-color var(--transition-short);
 }
-
 .bottom-bar__tab:hover {
     color: var(--text-primary);
 }
-
 .bottom-bar__tab--active {
     color: var(--accent-primary);
     border-bottom-color: var(--accent-primary);
 }
-
 .bottom-bar__content {
     overflow-y: auto;
     flex-grow: 1;
     padding: var(--spacing-xl);
 }
-
 .bottom-bar__prompt {
     display: flex;
     flex-direction: column;
@@ -464,7 +475,12 @@ body {
 /* ==========================================================================
    GATE STYLES
    ========================================================================== */
-
+/**
+ * <summary>
+ * Base styles for all quantum gate elements, both in the toolbar
+ * and on the circuit grid.
+ * </summary>
+ */
 .gate {
     display: flex;
     flex-direction: column;
@@ -475,7 +491,6 @@ body {
     border-radius: var(--border-radius-sm);
     transition: all 0.2s var(--ease-out-cubic);
 }
-
 .gate--toolbar {
     background-color: var(--bg-glass-tertiary);
     border: 1px solid var(--border-color);
@@ -483,12 +498,10 @@ body {
     height: var(--gate-size);
     cursor: grab;
 }
-
 .gate--toolbar:hover {
     transform: scale(1.05);
     border-color: var(--accent-primary);
 }
-
 .gate--circuit {
     position: relative;
     width: var(--gate-size);
@@ -499,13 +512,11 @@ body {
     box-shadow: var(--shadow-sm);
     white-space: nowrap;
 }
-
 .gate--circuit:active {
     cursor: grabbing;
     transform: scale(1.05);
     box-shadow: var(--shadow-lg);
 }
-
 .gate__param {
     font-size: 0.7em;
     font-weight: 500;
@@ -515,7 +526,11 @@ body {
     transform: scale(0.9);
 }
 
-/* Gate base colors */
+/**
+ * <summary>
+ * Defines the unique background color gradients for each type of quantum gate.
+ * </summary>
+ */
 .gate--h {
     background-image: linear-gradient(to top, #4dabf7 0%, #74c0fc 100%);
 }
@@ -553,18 +568,15 @@ body {
 /* ==========================================================================
    CIRCUIT GRID
    ========================================================================== */
-
 .circuit-grid-container {
     display: flex;
     min-width: fit-content;
 }
-
 .circuit-grid__labels {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
 }
-
 .circuit-grid__label {
     height: var(--gate-size);
     display: flex;
@@ -577,11 +589,9 @@ body {
     padding-right: 20px;
     flex-shrink: 0;
 }
-
 .circuit-grid__render-area {
     position: relative;
 }
-
 .circuit-grid__lines {
     position: absolute;
     top: 0;
@@ -593,12 +603,10 @@ body {
     gap: var(--spacing-md);
     z-index: 0;
 }
-
 .circuit-grid__line {
     height: var(--gate-size);
     position: relative;
 }
-
 .circuit-grid__line::after {
     content: "";
     position: absolute;
@@ -610,6 +618,12 @@ body {
     transform: translateY(-50%);
 }
 
+/**
+ * <summary>
+ * The main grid container for placing quantum gates. It uses CSS Grid
+ * for precise alignment.
+ * </summary>
+ */
 .circuit-grid {
     position: relative;
     z-index: 1;
@@ -618,7 +632,6 @@ body {
     gap: var(--spacing-md);
     justify-content: start;
 }
-
 .circuit-grid__cell {
     position: relative;
     height: var(--gate-size);
@@ -629,25 +642,26 @@ body {
     border-radius: var(--border-radius-sm);
     transition: background-color var(--transition-short);
 }
-
-/* Dropzone feedback styles */
 .circuit-grid__cell--available,
 .circuit-grid__cell--valid-drop {
     background-color: var(--accent-primary-translucent);
 }
-
 .circuit-grid__cell--invalid-drop {
     background-color: var(--danger-color-translucent);
     cursor: not-allowed;
 }
 
-/* Visual prompt for placing multi-qubit gates */
+/**
+ * <summary>
+ * Creates a pulsing glow effect used to highlight targetable cells
+ * when placing multi-qubit gates.
+ * </summary>
+ */
 .circuit-grid__cell--targetable-control,
 .circuit-grid__cell--targetable-target {
     border-radius: 50%;
     animation: pulse-glow 1.5s infinite ease-in-out;
 }
-
 @keyframes pulse-glow {
     0% {
         background-color: var(--accent-primary-translucent);
@@ -666,7 +680,6 @@ body {
 /* ==========================================================================
    MULTI-QUBIT GATE & TOOLTIPS
    ========================================================================== */
-
 .multi-qubit-gate {
     position: absolute;
     width: var(--gate-size);
@@ -674,7 +687,6 @@ body {
     display: flex;
     justify-content: center;
 }
-
 .multi-qubit-gate__connector {
     position: absolute;
     width: 4px;
@@ -686,7 +698,6 @@ body {
     border-radius: 2px;
     opacity: 0.8;
 }
-
 .multi-qubit-gate__body {
     width: 100%;
     height: 100%;
@@ -697,7 +708,6 @@ body {
     position: relative;
     z-index: 2;
 }
-
 .multi-qubit-gate__part {
     flex-grow: 1;
     width: 100%;
@@ -706,7 +716,6 @@ body {
     justify-content: center;
     min-height: var(--gate-size);
 }
-
 .gate-symbol {
     width: 28px;
     height: 28px;
@@ -720,29 +729,23 @@ body {
     font-weight: bold;
     line-height: 1;
 }
-
 .multi-qubit-gate__part--control .gate-symbol {
     width: 14px;
     height: 14px;
     background-color: var(--gate-text-color);
 }
-
 .multi-qubit-gate__part--target .gate-symbol {
     border: 4px solid var(--gate-text-color);
 }
-
 .multi-qubit-gate__part--target {
     cursor: grab;
 }
-
 .multi-qubit-gate__part--target:active {
     cursor: grabbing;
 }
-
 .gate-tooltip-wrapper {
     position: relative;
 }
-
 .gate-tooltip-wrapper::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -763,7 +766,6 @@ body {
     margin-bottom: var(--spacing-sm);
     pointer-events: none;
 }
-
 .gate-tooltip-wrapper:hover::after {
     opacity: 1;
     visibility: visible;
@@ -772,7 +774,12 @@ body {
 /* ==========================================================================
    RECHARTS CUSTOMIZATION
    ========================================================================== */
-
+/**
+ * <summary>
+ * Applies custom styling to the tooltips within Recharts bar charts
+ * to match the application's theme.
+ * </summary>
+ */
 .recharts-custom-tooltip {
     background-color: var(--bg-glass-tertiary);
     border: var(--border-width) solid var(--border-color);
@@ -780,13 +787,11 @@ body {
     padding: var(--spacing-md);
     box-shadow: var(--shadow-lg);
 }
-
 .recharts-custom-tooltip__label {
     font-weight: 600;
     margin-bottom: var(--spacing-sm);
     color: var(--text-primary);
 }
-
 .recharts-custom-tooltip__intro {
     color: var(--text-secondary);
     margin: 0;
@@ -795,7 +800,6 @@ body {
 /* ==========================================================================
    MODAL STYLES
    ========================================================================== */
-
 .modal-backdrop-glass {
     position: fixed;
     top: 0;
@@ -811,17 +815,14 @@ body {
     opacity: 0;
     animation: glassFadeIn 0.3s ease forwards;
 }
-
 @keyframes glassFadeIn {
     to {
         opacity: 1;
     }
 }
-
 .glass-modal {
     font-family: var(--font-family-sans);
 }
-
 .glass-modal-content {
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-lg);
@@ -830,14 +831,12 @@ body {
     backdrop-filter: blur(10px);
     color: var(--text-primary);
 }
-
 .glass-modal-header {
     border-bottom: var(--border-width) solid var(--border-color);
     padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
     background: var(--bg-glass-secondary);
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
-
 .glass-modal-title {
     font-weight: 600;
     font-size: 1.25rem;
@@ -846,47 +845,39 @@ body {
     color: var(--text-primary);
     margin: 0;
 }
-
 .glass-modal-body {
     padding: 0;
     max-height: 60vh;
     overflow-y: auto;
 }
-
 .glass-modal-footer {
     border-top: var(--border-width) solid var(--border-color);
     padding: var(--spacing-lg) var(--spacing-xl);
     background: var(--bg-glass-secondary);
     border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
 }
-
 .glass-btn-close {
     opacity: 0.7;
     transition: opacity var(--transition-short);
     filter: invert(0.7);
 }
-
 .glass-btn-close:hover {
     opacity: 1;
 }
-
 .btn.glass-btn-close {
     border: var(--border-width) solid var(--border-color);
     color: var(--text-secondary);
     font-weight: 500;
     padding: var(--spacing-sm) var(--spacing-lg);
 }
-
 .btn.glass-btn-close:hover {
     background-color: var(--bg-glass-tertiary);
     color: var(--text-primary);
 }
-
 .glass-list-group {
     border-radius: 0;
     border: none;
 }
-
 .glass-list-item {
     padding: var(--spacing-lg) var(--spacing-xl);
     border: none;
@@ -895,27 +886,22 @@ body {
     color: var(--text-primary);
     background: transparent;
 }
-
 .glass-list-item:last-child {
     border-bottom: none;
 }
-
 .glass-list-item:hover {
     background-color: var(--accent-primary-rgb);
     transform: translateX(4px);
 }
-
 .glass-list-item.active {
     background: rgba(var(--accent-primary-rgb), 0.15);
     border-left: 4px solid var(--accent-primary);
     color: var(--text-primary);
 }
-
 .glass-circuit-name {
     font-weight: 500;
     margin-bottom: var(--spacing-xs);
 }
-
 .glass-circuit-desc {
     font-size: 0.875rem;
     overflow: hidden;
@@ -923,16 +909,13 @@ body {
     white-space: nowrap;
     max-width: 300px;
 }
-
 .glass-circuit-icon {
     font-size: 1.25rem;
     color: var(--accent-primary);
 }
-
 .glass-list-item.active .glass-circuit-icon {
     color: var(--accent-primary);
 }
-
 .glass-active-badge {
     background-color: var(--accent-primary);
     color: var(--text-on-accent);
@@ -941,30 +924,24 @@ body {
     font-size: 0.75rem;
     border-radius: var(--border-radius-sm);
 }
-
 .glass-spinner {
     color: var(--accent-primary);
     width: 2rem;
     height: 2rem;
 }
-
 .glass-empty-state {
     color: var(--text-secondary);
 }
-
 @media (max-width: 576px) {
     .glass-modal-content {
         margin: var(--spacing-md);
     }
-
     .glass-list-item {
         padding: var(--spacing-md) var(--spacing-lg);
     }
-
     .glass-circuit-desc {
         max-width: 200px;
     }
-
     .glass-modal-header,
     .glass-modal-footer {
         padding: var(--spacing-lg);
@@ -974,8 +951,12 @@ body {
 /* ==========================================================================
    ANIMATION STYLES
    ========================================================================== */
-
-/* Running button animation */
+/**
+ * <summary>
+ * Styles the primary "Run" button, including transitions and a custom
+ * animation for its active/running state.
+ * </summary>
+ */
 .running-button {
     --color: var(--text-on-accent);
     --background: var(--accent-primary);
@@ -1009,14 +990,12 @@ body {
     min-width: 80px;
     height: 42px;
 }
-
 .running-button span {
     display: block;
     transition: opacity 0.4s ease;
     opacity: var(--opacity, 1);
     position: absolute;
 }
-
 .running-button .running {
     --scale: 0.64;
     --color: #fff;
@@ -1027,45 +1006,42 @@ body {
     transition: opacity 0.4s ease;
     opacity: var(--running-opacity, 0);
 }
-
 .running-button:hover {
     --b: var(--background-hover);
     --shadow-y: 8px;
     --shadow-blur: 16px;
 }
-
 .running-button:active {
     --y: 1px;
     --shadow-y: 4px;
     --shadow-blur: 8px;
 }
-
 .running-button.active {
     --b: var(--background-active);
     --opacity: 0;
     --running-opacity: 1;
 }
-
 .running-button.active:hover {
     --b: var(--background-active-hover);
 }
-
 .running-button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
-/* Running animation */
+/**
+ * <summary>
+ * Defines the animation for the running stick figure.
+ * </summary>
+ */
 .running {
     --color: var(--text-on-accent);
     --duration: 0.8s;
     transform: scale(var(--scale, 1));
 }
-
 .running .outer {
     animation: outer var(--duration) linear infinite;
 }
-
 .running .outer .body {
     background: var(--color);
     height: 15px;
@@ -1076,7 +1052,6 @@ body {
     transform: rotate(32deg);
     animation: body var(--duration) linear infinite;
 }
-
 .running .outer .body:before {
     content: "";
     width: 8px;
@@ -1087,7 +1062,6 @@ body {
     position: absolute;
     background: var(--color);
 }
-
 .running .outer .body .arm,
 .running .outer .body .arm:before,
 .running .outer .body .leg,
@@ -1104,64 +1078,52 @@ body {
     transform: rotate(var(--r, 0deg));
     animation: var(--name, arm-leg) var(--duration) linear infinite;
 }
-
 .running .outer .body .arm:before {
     --l: 7px;
     --name: arm-b;
 }
-
 .running .outer .body .arm.front {
     --r: 24deg;
     --r-to: 164deg;
 }
-
 .running .outer .body .arm.front:before {
     --r: -48deg;
     --r-to: -36deg;
 }
-
 .running .outer .body .arm.behind {
     --r: 164deg;
     --r-to: 24deg;
 }
-
 .running .outer .body .arm.behind:before {
     --r: -36deg;
     --r-to: -48deg;
 }
-
 .running .outer .body .leg {
     --w: 12px;
     --t: 11px;
 }
-
 .running .outer .body .leg:before {
     --t: 0;
     --l: 8px;
 }
-
 .running .outer .body .leg.front {
     --r: 10deg;
     --r-to: 108deg;
 }
-
 .running .outer .body .leg.front:before {
     --r: 18deg;
     --r-to: 76deg;
 }
-
 .running .outer .body .leg.behind {
     --r: 108deg;
     --r-to: 10deg;
     --c: none;
 }
-
 .running .outer .body .leg.behind:before {
     --c: var(--color);
     --r: 76deg;
     --r-to: 18deg;
 }
-
 .running .outer .body .leg.behind:after {
     content: "";
     top: 0;
@@ -1173,8 +1135,6 @@ body {
     position: absolute;
     background: var(--color);
 }
-
-/* Animation keyframes */
 @keyframes outer {
     50% {
         transform: translateY(0);
@@ -1184,7 +1144,6 @@ body {
         transform: translateY(4px);
     }
 }
-
 @keyframes body {
     50% {
         transform: rotate(16deg);
@@ -1194,13 +1153,11 @@ body {
         transform: rotate(24deg);
     }
 }
-
 @keyframes arm-leg {
     50% {
         transform: rotate(var(--r-to));
     }
 }
-
 @keyframes arm-b {
     30%,
     70% {
@@ -1208,7 +1165,12 @@ body {
     }
 }
 
-/* Enhanced Quantum Spinner */
+/**
+ * <summary>
+ * An advanced, visually appealing spinner animation with a core and
+ * orbiting particles to indicate a running simulation.
+ * </summary>
+ */
 .quantum-spinner-enhanced {
     width: 100px;
     height: 100px;
@@ -1216,7 +1178,6 @@ body {
     margin: 0 auto 25px;
     perspective: 800px;
 }
-
 .quantum-core {
     position: absolute;
     top: 50%;
@@ -1232,7 +1193,6 @@ body {
     animation: pulse-core 2s infinite ease-in-out;
     z-index: 10;
 }
-
 .quantum-orbital {
     position: absolute;
     top: 50%;
@@ -1244,15 +1204,12 @@ body {
     border-radius: 50%;
     transform-style: preserve-3d;
 }
-
 .quantum-orbital:nth-child(2) {
     transform: rotateY(70deg);
 }
-
 .quantum-orbital:nth-child(3) {
     transform: rotateX(70deg);
 }
-
 .quantum-particle {
     position: absolute;
     top: 0;
@@ -1266,19 +1223,16 @@ body {
     animation: orbit-particle 3s infinite linear;
     box-shadow: 0 0 10px var(--success-primary);
 }
-
 .quantum-particle:nth-child(2) {
     animation-delay: -1s;
     background: var(--accent-primary);
     box-shadow: 0 0 10px var(--accent-primary);
 }
-
 .quantum-particle:nth-child(3) {
     animation-delay: -2s;
     background: var(--danger-primary);
     box-shadow: 0 0 10px var(--danger-primary);
 }
-
 @keyframes pulse-core {
     0%,
     100% {
@@ -1290,7 +1244,6 @@ body {
         opacity: 0.7;
     }
 }
-
 @keyframes orbit-particle {
     0% {
         transform: rotate(0deg) translateX(35px) rotate(0deg);
@@ -1303,26 +1256,27 @@ body {
 /* ==========================================================================
    RESPONSIVE STYLES
    ========================================================================== */
-
+/**
+ * <summary>
+ * Contains media queries to adjust the application layout and component
+ * styles for various screen sizes, from desktop to mobile.
+ * </summary>
+ */
 @media (max-width: 992px) {
     .app-layout {
         grid-template-columns: 200px 1fr;
     }
-
     .sidebar {
         --sidebar-width: 200px;
     }
-
     .main-content {
         padding: var(--spacing-xl);
     }
 }
-
 @media (max-width: 768px) {
     .app-layout {
         grid-template-columns: 1fr;
     }
-
     .sidebar {
         position: fixed;
         left: -100%;
@@ -1331,43 +1285,34 @@ body {
         z-index: 100;
         transition: left 0.3s ease;
     }
-
     .sidebar--open {
         left: 0;
     }
-
     .main-content {
         padding: var(--spacing-lg);
     }
-
     .circuit-grid__label {
         width: 60px;
         padding-right: 10px;
     }
 }
-
 @media (max-width: 576px) {
     .header {
         padding: 0 var(--spacing-lg);
     }
-
     .header__section {
         gap: var(--spacing-md);
     }
-
     .header__qubit-controls {
         flex-wrap: wrap;
         justify-content: center;
     }
-
     .main-content {
         padding: var(--spacing-md);
     }
-
     .bottom-bar__content {
         padding: var(--spacing-lg);
     }
-
     .circuit-grid__label {
         width: 40px;
         font-size: 0.9rem;
@@ -1377,7 +1322,12 @@ body {
 /* ==========================================================================
    UTILITY CLASSES
    ========================================================================== */
-
+/**
+ * <summary>
+ * A utility class to visually hide elements while keeping them
+ * accessible to screen readers.
+ * </summary>
+ */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -1389,13 +1339,11 @@ body {
     white-space: nowrap;
     border: 0;
 }
-
 .text-truncate {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 .drag-over {
     background-color: var(--accent-primary-translucent);
     border-color: var(--accent-primary);
@@ -1404,29 +1352,30 @@ body {
 /* ==========================================================================
    PRINT STYLES
    ========================================================================== */
-
+/**
+ * <summary>
+ * Defines styles specifically for printing, hiding UI elements like the
+ * header and sidebar to provide a clean view of the circuit.
+ * </summary>
+ */
 @media print {
     .sidebar,
     .header,
     .bottom-bar {
         display: none;
     }
-
     .app-layout {
         display: block;
         height: auto;
     }
-
     .main-container {
         display: block;
         height: auto;
     }
-
     .main-content {
         overflow: visible;
         padding: 0;
     }
-
     .circuit-grid-container {
         page-break-inside: avoid;
     }
@@ -1435,13 +1384,16 @@ body {
 /* ==========================================================================
    BOTTOM BAR BORDER GLOW ANIMATION
    ========================================================================== */
-
+/**
+ * <summary>
+ * Applies a complex, multi-layered animated glow effect to the border of
+ * the bottom bar when simulation results are shown.
+ * </summary>
+ */
 .bottom-bar--results {
     position: relative;
     overflow: hidden;
 }
-
-/* Main circular glow effect */
 .bottom-bar--results::before {
     content: "";
     position: absolute;
@@ -1466,7 +1418,6 @@ body {
     z-index: 1;
     pointer-events: none;
 }
-
 @keyframes bottom-bar-glow {
     0% {
         background-position: -200% 0%;
@@ -1475,8 +1426,6 @@ body {
         background-position: 200% 0%;
     }
 }
-
-/* Additional pulsing effect */
 .bottom-bar--results::after {
     content: "";
     position: absolute;
@@ -1490,7 +1439,6 @@ body {
     pointer-events: none;
     z-index: 1;
 }
-
 @keyframes bottom-bar-pulse {
     0%,
     100% {
@@ -1506,8 +1454,6 @@ body {
             inset 0 0 15px rgba(var(--accent-primary-rgb), 0.2);
     }
 }
-
-/* Individual side animations for more dynamic effect */
 .bottom-bar--results .glow-top {
     position: absolute;
     top: 0;
@@ -1523,7 +1469,6 @@ body {
     animation: glow-top 3s linear infinite;
     z-index: 2;
 }
-
 .bottom-bar--results .glow-bottom {
     position: absolute;
     bottom: 0;
@@ -1539,7 +1484,6 @@ body {
     animation: glow-bottom 3s linear infinite;
     z-index: 2;
 }
-
 .bottom-bar--results .glow-right {
     position: absolute;
     top: -100%;
@@ -1555,7 +1499,6 @@ body {
     animation: glow-right 3s linear infinite;
     z-index: 2;
 }
-
 .bottom-bar--results .glow-left {
     position: absolute;
     bottom: -100%;
@@ -1571,7 +1514,6 @@ body {
     animation: glow-left 3s linear infinite;
     z-index: 2;
 }
-
 @keyframes glow-top {
     0% {
         left: -100%;
@@ -1580,7 +1522,6 @@ body {
         left: 100%;
     }
 }
-
 @keyframes glow-bottom {
     0% {
         right: -100%;
@@ -1589,7 +1530,6 @@ body {
         right: 100%;
     }
 }
-
 @keyframes glow-right {
     0% {
         top: -100%;
@@ -1598,7 +1538,6 @@ body {
         top: 100%;
     }
 }
-
 @keyframes glow-left {
     0% {
         bottom: -100%;
@@ -1607,8 +1546,6 @@ body {
         bottom: 100%;
     }
 }
-
-/* Quantum particle effects */
 .quantum-particles {
     position: absolute;
     top: 0;
@@ -1618,7 +1555,6 @@ body {
     pointer-events: none;
     z-index: 3;
 }
-
 .quantum-particle {
     position: absolute;
     width: 4px;
@@ -1628,55 +1564,46 @@ body {
     opacity: 0;
     animation: quantum-particle 4s linear infinite;
 }
-
 .quantum-particle:nth-child(1) {
     top: 10%;
     left: 0;
     animation-delay: 0s;
 }
-
 .quantum-particle:nth-child(2) {
     top: 30%;
     right: 0;
     animation-delay: 1s;
 }
-
 .quantum-particle:nth-child(3) {
     top: 50%;
     left: 0;
     animation-delay: 2s;
 }
-
 .quantum-particle:nth-child(4) {
     top: 70%;
     right: 0;
     animation-delay: 3s;
 }
-
 .quantum-particle:nth-child(5) {
     bottom: 0;
     left: 10%;
     animation-delay: 0.5s;
 }
-
 .quantum-particle:nth-child(6) {
     bottom: 0;
     left: 30%;
     animation-delay: 1.5s;
 }
-
 .quantum-particle:nth-child(7) {
     bottom: 0;
     left: 50%;
     animation-delay: 2.5s;
 }
-
 .quantum-particle:nth-child(8) {
     bottom: 0;
     left: 70%;
     animation-delay: 3.5s;
 }
-
 @keyframes quantum-particle {
     0% {
         opacity: 0;
@@ -1697,8 +1624,6 @@ body {
         transform: translateX(calc(100vw - 100%)) scale(0.5);
     }
 }
-
-/* Corner accent pulses */
 .corner-pulse {
     position: absolute;
     width: 10px;
@@ -1710,31 +1635,26 @@ body {
     box-shadow: 0 0 10px var(--accent-primary);
     z-index: 3;
 }
-
 .corner-pulse-tl {
     top: -5px;
     left: -5px;
     animation-delay: 0s;
 }
-
 .corner-pulse-tr {
     top: -5px;
     right: -5px;
     animation-delay: 0.75s;
 }
-
 .corner-pulse-br {
     bottom: -5px;
     right: -5px;
     animation-delay: 1.5s;
 }
-
 .corner-pulse-bl {
     bottom: -5px;
     left: -5px;
     animation-delay: 2.25s;
 }
-
 @keyframes corner-pulse {
     0%,
     100% {
@@ -1747,8 +1667,6 @@ body {
         box-shadow: 0 0 15px var(--accent-primary);
     }
 }
-
-/* Enhanced progress dots for processing state */
 .progress-dots {
     display: flex;
     justify-content: center;
@@ -1757,7 +1675,6 @@ body {
     margin-top: 20px;
     height: 30px;
 }
-
 .progress-dot {
     width: 12px;
     height: 12px;
@@ -1766,7 +1683,6 @@ body {
     opacity: 0.3;
     animation: progress-dot-pulse 1.5s infinite ease-in-out;
 }
-
 .progress-dot:nth-child(1) {
     animation-delay: 0s;
 }
@@ -1782,7 +1698,6 @@ body {
 .progress-dot:nth-child(5) {
     animation-delay: 0.8s;
 }
-
 @keyframes progress-dot-pulse {
     0%,
     100% {
@@ -1795,7 +1710,6 @@ body {
         box-shadow: 0 0 10px var(--accent-primary);
     }
 }
-
 .simulation-status__text {
     font-weight: 600;
     font-size: 1.3rem;
@@ -1804,7 +1718,6 @@ body {
     text-align: center;
     animation: text-pulse 3s infinite;
 }
-
 .simulation-status__subtext {
     color: var(--text-secondary);
     margin: 0;
@@ -1812,7 +1725,6 @@ body {
     text-align: center;
     animation: text-pulse 3s infinite;
 }
-
 @keyframes text-pulse {
     0%,
     100% {
@@ -1822,7 +1734,6 @@ body {
         opacity: 0.8;
     }
 }
-
 @keyframes subtext-slide {
     0%,
     100% {
@@ -1835,33 +1746,25 @@ body {
         transform: translateX(5px);
     }
 }
-
-/* Save button styles */
 .btn-outline-primary {
     border-color: var(--accent-primary);
     color: var(--accent-primary);
 }
-
 .btn-outline-primary:hover {
     background-color: var(--accent-primary);
     border-color: var(--accent-primary);
     color: var(--text-on-accent);
 }
-
-/* Badge styles for unsaved indicator */
 .badge.bg-warning {
     background-color: var(--danger-primary) !important;
     color: var(--text-on-accent);
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
 }
-
-/* Editable circuit name styles */
 .header__title-container {
     display: flex;
     align-items: center;
 }
-
 .header__circuit-title {
     cursor: pointer;
     margin: 0;
@@ -1869,11 +1772,9 @@ body {
     border-radius: var(--border-radius-sm);
     transition: background-color 0.2s;
 }
-
 .header__circuit-title:hover {
     background-color: var(--bg-glass-tertiary);
 }
-
 .header__circuit-title-input {
     background: var(--bg-glass-tertiary);
     border: 1px solid var(--border-color);
@@ -1886,63 +1787,50 @@ body {
     min-width: 150px;
     max-width: 300px;
 }
-
 .header__circuit-title-input:focus {
     outline: none;
     border-color: var(--accent-primary);
     box-shadow: 0 0 0 2px rgba(var(--accent-primary-rgb), 0.2);
 }
-
-/* Save prompt modal enhancements */
 .glass-modal-body p {
     margin-bottom: 0.5rem;
 }
-
 .glass-modal-body strong {
     color: var(--accent-primary);
     word-break: break-word;
 }
-
-/* Alternative simpler responsive styles */
 .save-prompt-buttons {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     width: 100%;
 }
-
 .save-prompt-buttons .btn {
     width: 100%;
     justify-content: center;
     padding: 0.75rem 1rem;
 }
-
 @media (min-width: 576px) {
     .save-prompt-buttons {
         flex-direction: row;
         justify-content: flex-end;
     }
-
     .save-prompt-buttons .btn {
         width: auto;
         flex: 1;
         min-width: 0;
     }
-
     .save-prompt-buttons .btn-secondary {
         flex: 0 0 auto;
         margin-right: auto;
     }
 }
-
 @media (min-width: 768px) {
     .save-prompt-buttons .btn {
         flex: none;
         min-width: 140px;
     }
 }
-
-/* Sidebar Logo Styles */
 .sidebar__header {
     display: flex;
     align-items: center;
@@ -1952,7 +1840,6 @@ body {
     border-bottom: var(--border-width) solid var(--border-color);
     flex-shrink: 0;
 }
-
 .sidebar__logo {
     display: flex;
     align-items: center;
@@ -1960,7 +1847,6 @@ body {
     width: 32px;
     height: 32px;
 }
-
 .sidebar__logo-img {
     width: 100%;
     height: 100%;
@@ -1968,51 +1854,39 @@ body {
     filter: invert(40%) sepia(90%) saturate(1500%) hue-rotate(220deg)
         brightness(90%) contrast(90%);
 }
-
 [data-bs-theme="light"] .sidebar__logo-img {
     filter: invert(30%) sepia(90%) saturate(1500%) hue-rotate(220deg)
         brightness(90%) contrast(90%);
 }
-
 .sidebar__title {
     font-weight: 600;
     font-size: 1.1rem;
 }
-
-/* Responsive adjustments for sidebar */
 @media (max-width: 768px) {
     .sidebar__logo {
         width: 28px;
         height: 28px;
     }
-
     .sidebar__title {
         font-size: 1rem;
     }
 }
-
 @media (max-width: 576px) {
     .sidebar__header {
         padding: 0 var(--spacing-lg);
     }
-
     .sidebar__logo {
         width: 24px;
         height: 24px;
     }
-
     .sidebar__title {
         font-size: 0.95rem;
     }
 }
-
-/* Alternative if you want to use an inline SVG instead of an img tag */
 .sidebar__logo-svg {
     width: 32px;
     height: 32px;
 }
-
-/* If the SVG has specific styling needs */
 .sidebar__logo {
     font-size: 1.8rem;
     display: flex;

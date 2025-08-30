@@ -1,7 +1,6 @@
 import React from "react";
 import { DraggableGate } from "./GateComponents";
 
-// A list of available quantum gates for the toolbar
 const AVAILABLE_GATES = [
   { id: "h", name: "H" },
   { id: "x", name: "X" },
@@ -18,13 +17,19 @@ const AVAILABLE_GATES = [
   { id: "measure", name: "Measure", isMeasurement: true },
 ];
 
+/**
+ * <summary>
+ * Renders the main application sidebar, which includes the gate palette for dragging
+ * quantum gates onto the circuit and circuit management controls.
+ * </summary>
+ * <param name="onNewCircuit" type="function">Callback function to create a new circuit.</param>
+ * <param name="onOpenBrowser" type="function">Callback function to open the circuit browser modal.</param>
+ */
 function Toolbar({ onNewCircuit, onOpenBrowser }) {
   return (
     <aside className="sidebar">
       <div className="sidebar__header">
-        <div className="sidebar__logo">
-          <img src="/qism.svg" alt="Qism Logo" className="sidebar__logo-img" />
-        </div>
+        <div className="sidebar__logo"></div>
         <span className="sidebar__title">qism</span>
       </div>
       <div className="sidebar__content">

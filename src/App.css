@@ -1,46 +1,93 @@
+/**
+ * <summary>
+ * Establishes the main content area for the application.
+ * </summary>
+ * <prop name="max-width" type="length">Constrains the width of the content for better readability on wide screens.</prop>
+ * <prop name="margin" type="string">Centers the content block horizontally within the viewport.</prop>
+ */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
 }
 
+/**
+ * <summary>
+ * A general container for the application, ensuring its content is center-aligned.
+ * </summary>
+ */
 .App {
-  text-align: center;
+    text-align: center;
 }
 
+/**
+ * <summary>
+ * Defines the base styling for logo images.
+ * </summary>
+ * <prop name="will-change" type="string">Optimizes the 'filter' property for smoother animations.</prop>
+ * <prop name="transition" type="string">Creates a smooth transition effect for the filter property.</prop>
+ */
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
 }
+
+/**
+ * <summary>
+ * Applies a glow effect when the user hovers over the logo.
+ * The '.react' variant provides a specific color for the React logo.
+ * </summary>
+ */
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+    filter: drop-shadow(0 0 2em #646cffaa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+    filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+/**
+ * <summary>
+ * Defines a simple 360-degree rotation animation.
+ * </summary>
+ */
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
+/**
+ * <summary>
+ * Applies the 'logo-spin' animation to a specific logo, but only if the user
+ * has not requested reduced motion in their system preferences.
+ * </summary>
+ */
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+    a:nth-of-type(2) .logo {
+        animation: logo-spin infinite 20s linear;
+    }
 }
 
+/**
+ * <summary>
+ * Provides basic padding for card-like container elements.
+ * </summary>
+ */
 .card {
-  padding: 2em;
+    padding: 2em;
 }
 
+/**
+ * <summary>
+ * Styles instructional or secondary text with a muted color.
+ * </summary>
+ */
 .read-the-docs {
-  color: #888;
+    color: #888;
 }

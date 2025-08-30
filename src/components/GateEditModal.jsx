@@ -1,5 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 
+/**
+ * <summary>
+ * A modal dialog for editing the parameters of a quantum gate.
+ * Currently supports editing the theta (θ) angle for rotation gates (Rx, Ry, Rz).
+ * </summary>
+ * <param name="gate" type="object">The gate instance object to be edited.</param>
+ * <param name="isOpen" type="boolean">Controls whether the modal is currently visible.</param>
+ * <param name="onClose" type="function">Callback function to close the modal without saving changes.</param>
+ * <param name="onSave" type="function">Callback function to save the updated parameters, taking instanceId and new params as arguments.</param>
+ */
 function GateEditModal({ gate, isOpen, onClose, onSave }) {
   const [params, setParams] = useState({});
 

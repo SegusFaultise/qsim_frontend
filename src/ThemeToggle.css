@@ -1,3 +1,11 @@
+/**
+ * <summary>
+ * Styles the main container for the theme toggle button.
+ * </summary>
+ * <prop name="position" type="fixed">Positions the button relative to the viewport, keeping it in a fixed location on the screen.</prop>
+ * <prop name="z-index" type="number">Ensures the button appears on top of other page content.</prop>
+ * <prop name="backdrop-filter" type="string">Applies a blur effect to the area behind the semi-transparent button.</prop>
+ */
 .theme-toggle-button {
     position: fixed;
     top: 1rem;
@@ -8,21 +16,23 @@
     border-radius: 50%;
     cursor: pointer;
     padding: 8px;
-    /* UPDATED: Increased size */
     width: 70px;
     height: 70px;
     backdrop-filter: blur(5px);
     transition: transform 0.2s ease;
 }
 
-/* UPDATED: Combined the hover effects */
+/**
+ * <summary>
+ * Defines the hover-state interactions for the theme toggle button,
+ * rotating the state vector and adding a glow to the sphere.
+ * </summary>
+ */
 .theme-toggle-button:hover .state-vector {
-    /* Rotates to superposition and scales down slightly to prevent clipping */
     transform: rotate(90deg) scale(0.9);
 }
 
 .theme-toggle-button:hover .sphere-line {
-    /* ADDED: Makes the sphere lines glow on hover */
     stroke-width: 1.5;
     filter: drop-shadow(0 0 2px magenta);
 }
@@ -33,7 +43,12 @@
     overflow: visible;
 }
 
-/* --- Bloch Sphere Styles --- */
+/**
+ * <summary>
+ * Contains styles for the different parts of the Bloch sphere SVG representation,
+ * including the background, grid lines, and axis.
+ * </summary>
+ */
 .sphere-background {
     fill: rgba(255, 0, 255, 0.1);
 }
@@ -42,7 +57,7 @@
     fill: none;
     stroke: magenta;
     stroke-width: 1;
-    transition: all 0.3s ease; /* Added for smooth hover effect */
+    transition: all 0.3s ease;
 }
 
 .sphere-axis {
@@ -57,10 +72,17 @@
     font-family: monospace;
 }
 
+/**
+ * <summary>
+ * Styles the state vector arrow within the Bloch sphere, including its
+ * bouncy transition animation when the theme changes.
+ * </summary>
+ * <prop name="transform-origin" type="string">Sets the pivot point for rotations to the center of the sphere.</prop>
+ * <prop name="transition" type="string">Applies a custom cubic-bezier timing function to create a spring-like animation effect.</prop>
+ */
 .state-vector {
-    /* FIXED: Changed the pivot point to the center of the sphere */
     transform-origin: 0 0;
-    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Smooth, bouncy transition */
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 .vector-line {
@@ -74,7 +96,13 @@
     transition: fill 0.3s ease;
 }
 
-/* --- Light Theme Styles --- */
+/**
+ * <summary>
+ * Contains all style overrides that apply when the light theme is active,
+ * identified by the [data-bs-theme="light"] attribute. This section changes
+ * the color scheme to green and flips the state vector to the |1⟩ state.
+ * </summary>
+ */
 [data-bs-theme="light"] .sphere-background {
     fill: rgba(0, 255, 0, 0.1);
 }
@@ -83,22 +111,18 @@
     stroke: limegreen;
 }
 
-/* Flips the state vector to the |1⟩ state on theme change */
 [data-bs-theme="light"] .state-vector {
     transform: rotate(180deg);
 }
 
-/* When hovering in light mode, the vector still goes to superposition */
 [data-bs-theme="light"] .theme-toggle-button:hover .state-vector {
     transform: rotate(90deg) scale(0.9);
 }
 
-/* ADDED: Hover effect for the sphere lines in light mode */
 [data-bs-theme="light"] .theme-toggle-button:hover .sphere-line {
     filter: drop-shadow(0 0 3px limegreen);
 }
 
-/* FIXED: Changed the vector color to be always white */
 [data-bs-theme="light"] .vector-line {
     stroke: white;
 }

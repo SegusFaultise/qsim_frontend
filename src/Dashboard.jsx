@@ -19,12 +19,25 @@ import { Gate } from "./components/GateComponents";
 import GateEditModal from "./components/GateEditModal";
 import BottomBar from "./components/BottomBar";
 import CircuitBrowserModal from "./components/CircuitBrowserModal";
-import SimulationStatus from "./components/SimulationStatus";
 import SavePromptModal from "./components/SavePromptModal";
 
 const createEmptyCircuit = (qubits, steps) =>
   Array.from({ length: qubits }, () => Array(steps).fill(null));
 
+/**
+ * <summary>
+ * The main dashboard component for the quantum circuit simulator. It orchestrates the entire application,
+ * managing the circuit state, user interactions (drag-and-drop), API calls for saving/loading circuits
+ * and running simulations, and all UI modals and panels.
+ * </summary>
+ * <param name="theme" type="string">The current application theme ('dark' or 'light').</param>
+ * <param name="toggleTheme" type="function">A callback function to switch the application theme.</param>
+ * <state name="circuit" type="Array<Array<object>>">The 2D array representing the quantum circuit.</state>
+ * <state name="numQubits" type="number">The number of qubit rows in the circuit.</state>
+ * <state name="pendingGate" type="object">State object for handling the placement of multi-qubit gates.</state>
+ * <state name="simulationStatus" type="string">The current status of a simulation ('running', 'completed', 'error').</state>
+ * <state name="currentCircuitId" type="string|number">The database ID of the currently loaded circuit.</state>
+ */
 function Dashboard({ theme, toggleTheme }) {
   const { logout } = useAuth();
   const [numQubits, setNumQubits] = useState(3);
@@ -64,7 +77,6 @@ function Dashboard({ theme, toggleTheme }) {
   const [isEditingName, setIsEditingName] = useState(false);
   const nameInputRef = useRef(null);
 
-  // Function to handle name editing
   const handleNameEdit = () => {
     setIsEditingName(true);
     setTimeout(() => {
@@ -75,19 +87,16 @@ function Dashboard({ theme, toggleTheme }) {
     }, 10);
   };
 
-  // Function to handle name change
   const handleNameChange = (e) => {
     setCurrentCircuitName(e.target.value);
     setHasUnsavedChanges(true);
     setIsCircuitSaved(false);
   };
 
-  // Function to save the name when user presses Enter or clicks away
   const handleNameSave = () => {
     setIsEditingName(false);
   };
 
-  // Function to handle key press in name input
   const handleNameKeyPress = (e) => {
     if (e.key === "Enter") {
       handleNameSave();
@@ -96,13 +105,11 @@ function Dashboard({ theme, toggleTheme }) {
     }
   };
 
-  // Function to handle circuit changes (mark as unsaved)
   const handleCircuitChange = useCallback(() => {
     setIsCircuitSaved(false);
     setHasUnsavedChanges(true);
   }, []);
 
-  // Function to handle run simulation with save prompt
   const handleRunWithSavePrompt = () => {
     if (!isCircuitSaved || hasUnsavedChanges) {
       setShowSavePrompt(true);
@@ -111,7 +118,6 @@ function Dashboard({ theme, toggleTheme }) {
     }
   };
 
-  // Function to handle saving and running
   const handleSaveAndRun = async () => {
     setShowSavePrompt(false);
     const result = await handleSaveCircuit();
@@ -120,7 +126,6 @@ function Dashboard({ theme, toggleTheme }) {
     }
   };
 
-  // Function to handle running without saving
   const handleRunWithoutSave = () => {
     setShowSavePrompt(false);
     if (currentCircuitId) {
@@ -130,7 +135,6 @@ function Dashboard({ theme, toggleTheme }) {
     }
   };
 
-  // Function to handle successful save
   const handleSaveCircuit = async () => {
     const result = await saveCircuit();
     if (result.success) {
@@ -307,7 +311,6 @@ function Dashboard({ theme, toggleTheme }) {
     setIsBrowserModalOpen(false);
   };
 
-  // Updated run simulation function that accepts a circuit ID
   const runSimulationWithId = async (circuitId) => {
     if (!circuitId) {
       alert("Please save your circuit before simulating.");
@@ -329,7 +332,6 @@ function Dashboard({ theme, toggleTheme }) {
     }
   };
 
-  // Regular run simulation function
   const runSimulation = async () => {
     if (!currentCircuitId) {
       setShowSavePrompt(true);
@@ -459,11 +461,9 @@ function Dashboard({ theme, toggleTheme }) {
       const instanceId = nanoid();
       setCircuit((prev) => {
         const newCircuit = prev.map((r) => [...r]);
-        // Place controls
         controlQubits.forEach((q) => {
           newCircuit[q][columnIndex] = { ...gate, instanceId, role: "control" };
         });
-        // Place target
         newCircuit[qubitIndex][columnIndex] = {
           ...gate,
           instanceId,
@@ -647,7 +647,9 @@ function Dashboard({ theme, toggleTheme }) {
         />
 
         <div
-          className={`main-container ${activeTab ? "main-container--results-open" : ""}`}
+          className={`main-container ${
+            activeTab ? "main-container--results-open" : ""
+          }`}
         >
           <TopBar
             currentCircuitName={currentCircuitName}

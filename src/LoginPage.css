@@ -1,7 +1,20 @@
-/* --- Light Theme Override --- */
-/* This rule applies a complementary green theme when the light mode is active */
+/**
+ * <summary>
+ * Stylesheet for the application's animated login page.
+ * This file includes styles for a dynamic, multi-layered background with parallax effects,
+ * as well as theme-specific overrides for light and dark modes.
+ * </summary>
+ * <version>1.2.0</version>
+ */
+
+/**
+ * <summary>
+ * Contains all style overrides that apply when the light theme is active,
+ * identified by the [data-bs-theme="light"] attribute. This section ensures
+ * a cohesive green-toned theme that complements the light mode.
+ * </summary>
+ */
 [data-bs-theme="light"] .login-container {
-    /* UPDATED: Matched the green sphere gradient to the magenta one */
     background: radial-gradient(
         circle,
         rgba(0, 255, 0, 0.5) -40%,
@@ -21,12 +34,10 @@
     );
 }
 
-/* This rule makes the notations float UP on the light theme */
 [data-bs-theme="light"] .notation-bg span {
     animation-name: float-up;
 }
 
-/* FIXED: This rule makes the shooting stars use the correct light theme animation */
 [data-bs-theme="light"] .notation-bg span:nth-child(2),
 [data-bs-theme="light"] .notation-bg span:nth-child(6),
 [data-bs-theme="light"] .notation-bg span:nth-child(12),
@@ -40,7 +51,6 @@
     animation-name: shoot-up-light;
 }
 
-/* FIXED: Made the selector more specific and added text color */
 [data-bs-theme="light"] .login-container .btn-primary {
     --bs-btn-color: #fff;
     --bs-btn-bg: limegreen;
@@ -54,13 +64,19 @@
     --bs-btn-focus-shadow-rgb: 49, 132, 253;
 }
 
-/* ADDED: This rule makes the stars float UP on the light theme */
 [data-bs-theme="light"] .stars,
 [data-bs-theme="light"] .stars2,
 [data-bs-theme="light"] .stars3 {
     animation-name: pan-stars-reverse;
 }
 
+/**
+ * <summary>
+ * Styles the main container for the login page, establishing a full-viewport
+ * flex container with a central animated gradient and 3D perspective for child elements.
+ * </summary>
+ * <prop name="perspective" type="length">Creates a 3D space, allowing child elements with 3D transforms (like translateZ) to have a depth effect.</prop>
+ */
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -77,11 +93,9 @@
     animation: hypnotic-pulse 25s ease-in-out infinite;
     position: relative;
     overflow: hidden;
-    /* ADDED: Creates the 3D space for the depth effect */
     perspective: 1000px;
 }
 
-/* ADDED: This rule changes the login button color in dark theme */
 [data-bs-theme="dark"] .login-container .btn-primary {
     --bs-btn-color: #fff;
     --bs-btn-bg: magenta;
@@ -107,7 +121,12 @@
     }
 }
 
-/* --- Starfield Background --- */
+/**
+ * <summary>
+ * Creates a multi-layered, animated starfield background for a parallax depth effect.
+ * Each layer moves at a different speed.
+ * </summary>
+ */
 .stars,
 .stars2,
 .stars3 {
@@ -115,10 +134,9 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 200%; /* Made taller to ensure seamless animation */
+    height: 200%;
     background-repeat: repeat;
     background-size: cover;
-    /* UPDATED: Separated animation properties to prevent restart on theme change */
     animation-timing-function: linear;
     animation-iteration-count: infinite;
 }
@@ -162,7 +180,12 @@
     }
 }
 
-/* --- Notation Background Styles --- */
+/**
+ * <summary>
+ * Styles the container for the floating quantum notation symbols. It establishes
+ * a 3D transform context for the parallax effect.
+ * </summary>
+ */
 .notation-bg {
     position: absolute;
     top: 0;
@@ -170,7 +193,6 @@
     width: 100%;
     height: 100%;
     z-index: 1;
-    /* ADDED: Enables 3D positioning for child elements */
     transform-style: preserve-3d;
 }
 
@@ -180,13 +202,10 @@
     font-family: "Courier New", Courier, monospace;
     font-weight: bold;
     user-select: none;
-    /* Default animation is now float-down for the dark theme */
     animation: float-down 20s linear infinite;
     will-change: transform, opacity;
 }
 
-/* --- Keyframe Animations --- */
-/* Animation for dark theme (top to bottom) */
 @keyframes float-down {
     from {
         transform: translateY(-50vh) rotate(0deg) translateZ(var(--depth, 0));
@@ -202,7 +221,6 @@
     }
 }
 
-/* Animation for light theme (bottom to top) */
 @keyframes float-up {
     from {
         transform: translateY(120vh) rotate(0deg) translateZ(var(--depth, 0));
@@ -218,7 +236,6 @@
     }
 }
 
-/* ADDED: New shoot-down animation for dark theme */
 @keyframes shoot-down {
     from {
         transform: translateY(-50vh) translateZ(var(--depth, 0));
@@ -263,7 +280,6 @@
     }
 }
 
-/* ADDED: New shoot-up animation for light theme with correct colors */
 @keyframes shoot-up-light {
     from {
         transform: translateY(120vh) translateZ(var(--depth, 0));
@@ -316,22 +332,25 @@
     }
 }
 
-/* --- Applying Animations and Depth --- */
-/* Foreground Layer (Fast, Large, Close) */
+/**
+ * <summary>
+ * Applies the parallax effect to the floating notations by assigning different depths,
+ * font sizes, and animation durations to create foreground, midground, and background layers.
+ * Also positions and randomizes the animation start times for each symbol.
+ * </summary>
+ */
 .notation-bg span:nth-child(3n) {
     --depth: 300px;
     font-size: 24px;
     animation-duration: 15s;
 }
 
-/* Midground Layer (Default) */
 .notation-bg span:nth-child(3n + 1) {
     --depth: 0px;
     font-size: 18px;
     animation-duration: 25s;
 }
 
-/* Background Layer (Slow, Small, Far) */
 .notation-bg span:nth-child(3n + 2) {
     --depth: -300px;
     font-size: 12px;
@@ -339,7 +358,6 @@
     animation-duration: 35s;
 }
 
-/* --- Applying Specific Positions --- */
 .notation-bg span:nth-child(1) {
     left: 10%;
     animation-delay: -2s;
@@ -501,7 +519,13 @@
     animation-delay: -80s;
 }
 
-/* Default "shooting star" animation is now shoot-down */
+/**
+ * <summary>
+ * Overrides the default floating animation for specific notation elements,
+ * turning them into "shooting stars" with a faster, more linear animation
+ * and a glowing effect.
+ * </summary>
+ */
 .notation-bg span:nth-child(2) {
     left: 85%;
     font-size: 22px;

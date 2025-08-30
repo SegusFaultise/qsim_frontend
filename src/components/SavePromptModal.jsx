@@ -1,5 +1,16 @@
 import React from "react";
 
+/**
+ * <summary>
+ * A modal dialog that prompts the user to save their circuit before running a simulation
+ * if unsaved changes are detected.
+ * </summary>
+ * <param name="isOpen" type="boolean">Controls whether the modal is visible.</param>
+ * <param name="circuitName" type="string">The name of the circuit that has unsaved changes.</param>
+ * <param name="onSave" type="function">Callback function executed when the user chooses to save and then run.</param>
+ * <param name="onRunWithoutSave" type="function">Callback function executed when the user chooses to run without saving.</param>
+ * <param name="onCancel" type="function">Callback function to cancel the operation and close the modal.</param>
+ */
 function SavePromptModal({
   isOpen,
   circuitName,

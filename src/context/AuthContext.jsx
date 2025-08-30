@@ -1,17 +1,17 @@
 import { createContext, useState, useEffect, useContext } from "react";
 
-// Create a context for authentication
 const AuthContext = createContext(null);
 
 /**
- * Provides authentication state to its children components.
- * It manages the user's token and authentication status.
+ * <summary>
+ * Provides authentication state and functions to its children components.
+ * It manages the user's authentication token for session persistence.
+ * </summary>
+ * <param name="children" type="React.ReactNode">The child components that will have access to the auth context.</param>
  */
 export const AuthProvider = ({ children }) => {
-  // Initialize token from localStorage for session persistence
   const [token, setToken] = useState(() => localStorage.getItem("authToken"));
 
-  // Effect to synchronize the token with localStorage whenever it changes
   useEffect(() => {
     if (token) {
       localStorage.setItem("authToken", token);
@@ -20,30 +20,31 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  // Function to update the token upon successful login
   const login = (newToken) => {
     setToken(newToken);
   };
 
-  // Function to clear the token upon logout
   const logout = () => {
     setToken(null);
   };
 
-  // The value provided to consuming components
   const value = {
     token,
     login,
     logout,
-    isAuthenticated: !!token, // Boolean flag for easy checking of auth status
+    isAuthenticated: !!token,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 /**
- * Custom hook to easily access the authentication context.
- * This avoids the need to import useContext and AuthContext in every component.
+ * <summary>
+ * A custom hook for consuming the authentication context.
+ * It provides an easy way to access the auth state and functions like login and logout.
+ * </summary>
+ * <returns type="object">The authentication context value, including the token, auth status, and login/logout functions.</returns>
+ * <exception cref="Error">Throws an error if used outside of an AuthProvider.</exception>
  */
 export const useAuth = () => {
   const context = useContext(AuthContext);

@@ -15,17 +15,23 @@ const formatSimulationData = (result) => {
   return Object.entries(result.states)
     .map(([state, probability]) => ({
       state: `|${state}⟩`,
-      probability: parseFloat((probability * 100).toFixed(2)), // Keep as number for charting
+      probability: parseFloat((probability * 100).toFixed(2)),
     }))
     .sort((a, b) => a.state.localeCompare(b.state));
 };
 
+/**
+ * <summary>
+ * Renders a bar chart displaying the measurement outcome probabilities from a quantum circuit simulation.
+ * It formats the raw simulation data and uses the Recharts library for visualization.
+ * </summary>
+ * <param name="simulationResult" type="object">The result object from the simulation, containing a 'states' property with state-probability key-value pairs.</param>
+ */
 function SimulationResults({ simulationResult }) {
   if (!simulationResult) return null;
 
   const chartData = formatSimulationData(simulationResult);
 
-  // Custom Tooltip for better theme integration
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
