@@ -1,13 +1,30 @@
 import React from "react";
 import SimulationResults from "./SimulationResults";
+import SimulationStatus from "./SimulationStatus";
 
 function BottomBar({
   simulationResult,
+  simulationStatus,
   activeTab,
   onTabClick,
   onRunSimulation,
 }) {
   const renderTabContent = () => {
+    // Show loading state when simulation is running
+    if (simulationStatus === "running") {
+      return (
+        <>
+          <SimulationStatus status={simulationStatus} />
+          <div className="simulation-progress">
+            <div className="progress-bar">
+              <div className="progress-fill"></div>
+            </div>
+            <div className="progress-text">Processing quantum states...</div>
+          </div>
+        </>
+      );
+    }
+
     if (!simulationResult) {
       return (
         <div className="bottom-bar__prompt">

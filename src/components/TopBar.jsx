@@ -60,7 +60,7 @@ function TopBar({
           <span className="d-none d-md-inline ms-2">Clear</span>
         </button>
 
-        {/* Running Button with Animation */}
+        {/* Running Button with Animation in Center */}
         <button
           className={`running-button ${simulationStatus === "running" ? "active" : ""}`}
           onClick={onRunSimulation}
@@ -68,7 +68,7 @@ function TopBar({
             isLoading || simulationStatus === "running" || !currentCircuitId
           }
         >
-          <span className="default">Run Simulation</span>
+          <span>Run Simulation</span>
           <div className="running">
             <div className="outer">
               <div className="body">

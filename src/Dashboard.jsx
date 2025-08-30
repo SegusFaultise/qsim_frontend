@@ -210,6 +210,7 @@ function Dashboard({ theme, toggleTheme }) {
     setIsBrowserModalOpen(false); // NEW
   };
 
+  // In Dashboard.jsx, update the runSimulation function:
   const runSimulation = async () => {
     if (!currentCircuitId) {
       alert("Please save your circuit before simulating.");
@@ -219,6 +220,7 @@ function Dashboard({ theme, toggleTheme }) {
       setIsLoading(true);
       setSimulationStatus("running");
       setSimulationResult(null);
+      setActiveTab("results"); // Auto-expand the results tab
       const response = await simulationApi.startSimulation(currentCircuitId);
       setSimulationJobId(response.job_id);
       setTimeout(() => checkSimulationResult(response.job_id), 3000);
@@ -546,6 +548,7 @@ function Dashboard({ theme, toggleTheme }) {
           </main>
           <BottomBar
             simulationResult={simulationResult}
+            simulationStatus={simulationStatus} // Add this line
             activeTab={activeTab}
             onTabClick={handleTabClick}
             onRunSimulation={runSimulation}
