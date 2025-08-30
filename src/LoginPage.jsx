@@ -11,27 +11,8 @@ import {
 } from "react-bootstrap";
 import { useAuth } from "./context/AuthContext";
 import ThemeToggle from "./ThemeToggle"; // Import the ThemeToggle component
+import { loginUser } from "./services/auth"; // Import the function
 import "./LoginPage.css";
-
-const loginUser = async (username, password) => {
-  const formData = new URLSearchParams();
-  formData.append("username", username);
-  formData.append("password", password);
-
-  const response = await fetch(`http://localhost:8000/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.detail || "Login failed. Please check your credentials.",
-    );
-  }
-  return response.json();
-};
 
 // Accept theme and toggleTheme as props
 function LoginPage({ theme, toggleTheme }) {
@@ -46,7 +27,7 @@ function LoginPage({ theme, toggleTheme }) {
     setIsLoading(true);
     setError("");
     try {
-      const data = await loginUser(username, password);
+      const data = await loginUser({ username, password }); // Use the imported function
       login(data.access_token);
     } catch (err) {
       setError(err.message);

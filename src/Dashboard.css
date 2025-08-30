@@ -1902,3 +1902,122 @@ body {
     color: var(--accent-primary);
     word-break: break-word;
 }
+
+/* Alternative simpler responsive styles */
+.save-prompt-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.save-prompt-buttons .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+}
+
+@media (min-width: 576px) {
+    .save-prompt-buttons {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .save-prompt-buttons .btn {
+        width: auto;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .save-prompt-buttons .btn-secondary {
+        flex: 0 0 auto;
+        margin-right: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .save-prompt-buttons .btn {
+        flex: none;
+        min-width: 140px;
+    }
+}
+
+/* Sidebar Logo Styles */
+.sidebar__header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: 0 var(--spacing-xl);
+    height: var(--header-height);
+    border-bottom: var(--border-width) solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.sidebar__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.sidebar__logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: invert(40%) sepia(90%) saturate(1500%) hue-rotate(220deg)
+        brightness(90%) contrast(90%);
+}
+
+[data-bs-theme="light"] .sidebar__logo-img {
+    filter: invert(30%) sepia(90%) saturate(1500%) hue-rotate(220deg)
+        brightness(90%) contrast(90%);
+}
+
+.sidebar__title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments for sidebar */
+@media (max-width: 768px) {
+    .sidebar__logo {
+        width: 28px;
+        height: 28px;
+    }
+
+    .sidebar__title {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar__header {
+        padding: 0 var(--spacing-lg);
+    }
+
+    .sidebar__logo {
+        width: 24px;
+        height: 24px;
+    }
+
+    .sidebar__title {
+        font-size: 0.95rem;
+    }
+}
+
+/* Alternative if you want to use an inline SVG instead of an img tag */
+.sidebar__logo-svg {
+    width: 32px;
+    height: 32px;
+}
+
+/* If the SVG has specific styling needs */
+.sidebar__logo {
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}

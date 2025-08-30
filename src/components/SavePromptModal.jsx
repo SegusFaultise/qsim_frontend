@@ -11,7 +11,10 @@ function SavePromptModal({
 
   return (
     <div className="modal-backdrop-glass">
-      <div className="glass-modal-content" style={{ maxWidth: "500px" }}>
+      <div
+        className="glass-modal-content save-prompt-modal"
+        style={{ maxWidth: "500px" }}
+      >
         <div className="glass-modal-header">
           <h5 className="glass-modal-title">
             <i className="bi bi-exclamation-triangle-fill text-warning me-2"></i>
@@ -24,16 +27,21 @@ function SavePromptModal({
           </p>
           <p>Would you like to save before running?</p>
         </div>
-        <div className="glass-modal-footer">
-          <button className="btn btn-secondary" onClick={onCancel}>
-            Cancel
-          </button>
-          <button className="btn btn-outline-danger" onClick={onRunWithoutSave}>
-            Run Without Saving
-          </button>
-          <button className="btn btn-primary" onClick={onSave}>
-            <i className="bi bi-save me-2"></i>Save & Run
-          </button>
+        <div className="glass-modal-footer save-prompt-footer">
+          <div className="save-prompt-buttons">
+            <button className="btn btn-secondary" onClick={onCancel}>
+              Cancel
+            </button>
+            <button
+              className="btn btn-outline-danger"
+              onClick={onRunWithoutSave}
+            >
+              Run Without Saving
+            </button>
+            <button className="btn btn-primary" onClick={onSave}>
+              <i className="bi bi-save me-2"></i>Save & Run
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { getAuthToken } from "./auth";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "http://13.211.161.27:8080";
 
 async function apiRequest(endpoint, options = {}) {
   const token = getAuthToken();

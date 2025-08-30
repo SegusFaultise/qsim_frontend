@@ -61,14 +61,12 @@ function Dashboard({ theme, toggleTheme }) {
   const [isCircuitSaved, setIsCircuitSaved] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Add these state variables
   const [isEditingName, setIsEditingName] = useState(false);
   const nameInputRef = useRef(null);
 
   // Function to handle name editing
   const handleNameEdit = () => {
     setIsEditingName(true);
-    // Focus the input field after a small delay to ensure it's rendered
     setTimeout(() => {
       if (nameInputRef.current) {
         nameInputRef.current.focus();
@@ -87,7 +85,6 @@ function Dashboard({ theme, toggleTheme }) {
   // Function to save the name when user presses Enter or clicks away
   const handleNameSave = () => {
     setIsEditingName(false);
-    // Name is already updated in state, no need for additional action
   };
 
   // Function to handle key press in name input
@@ -107,36 +104,43 @@ function Dashboard({ theme, toggleTheme }) {
 
   // Function to handle run simulation with save prompt
   const handleRunWithSavePrompt = () => {
-    if (!isCircuitSaved) {
+    if (!isCircuitSaved || hasUnsavedChanges) {
       setShowSavePrompt(true);
     } else {
-      runSimulation();
+      runSimulationWithId(currentCircuitId);
     }
   };
 
   // Function to handle saving and running
   const handleSaveAndRun = async () => {
     setShowSavePrompt(false);
-    const success = await handleSaveCircuit();
-    if (success) {
-      runSimulation();
+    const result = await handleSaveCircuit();
+    if (result.success) {
+      runSimulationWithId(result.circuitId);
     }
   };
 
   // Function to handle running without saving
   const handleRunWithoutSave = () => {
     setShowSavePrompt(false);
-    runSimulation();
+    if (currentCircuitId) {
+      runSimulationWithId(currentCircuitId);
+    } else {
+      alert("Please save your circuit before simulating.");
+    }
   };
 
   // Function to handle successful save
   const handleSaveCircuit = async () => {
-    const success = await saveCircuit();
-    if (success) {
+    const result = await saveCircuit();
+    if (result.success) {
       setIsCircuitSaved(true);
       setHasUnsavedChanges(false);
+      if (result.circuitId) {
+        setCurrentCircuitId(result.circuitId);
+      }
     }
-    return success;
+    return result;
   };
 
   const handleTabClick = (tabName) => {
@@ -164,10 +168,9 @@ function Dashboard({ theme, toggleTheme }) {
   }, []);
 
   const saveCircuit = async () => {
-    // Remove the prompt and use the current circuit name
     if (!currentCircuitName.trim()) {
       alert("Please enter a circuit name");
-      return false;
+      return { success: false, circuitId: null };
     }
 
     try {
@@ -221,26 +224,29 @@ function Dashboard({ theme, toggleTheme }) {
       });
 
       const circuitData = {
-        name: currentCircuitName.trim(), // Use the current name
+        name: currentCircuitName.trim(),
         qubits: numQubits,
         gates: gatesToSave,
       };
+
+      let circuitId = currentCircuitId;
 
       if (currentCircuitId) {
         await circuitsApi.updateCircuit(currentCircuitId, circuitData);
       } else {
         const response = await circuitsApi.createCircuit(circuitData);
-        setCurrentCircuitId(response.id);
+        circuitId = response.id;
       }
       setCurrentCircuitName(currentCircuitName.trim());
       await loadUserCircuits();
-      return true;
+
+      return { success: true, circuitId };
     } catch (error) {
       console.error(
         "Failed to save circuit:",
         error.response?.data || error.message,
       );
-      return false;
+      return { success: false, circuitId: null };
     } finally {
       setIsLoading(false);
     }
@@ -301,8 +307,9 @@ function Dashboard({ theme, toggleTheme }) {
     setIsBrowserModalOpen(false);
   };
 
-  const runSimulation = async () => {
-    if (!currentCircuitId) {
+  // Updated run simulation function that accepts a circuit ID
+  const runSimulationWithId = async (circuitId) => {
+    if (!circuitId) {
       alert("Please save your circuit before simulating.");
       return;
     }
@@ -311,7 +318,7 @@ function Dashboard({ theme, toggleTheme }) {
       setSimulationStatus("running");
       setSimulationResult(null);
       setActiveTab("probabilities");
-      const response = await simulationApi.startSimulation(currentCircuitId);
+      const response = await simulationApi.startSimulation(circuitId);
       setSimulationJobId(response.job_id);
       setTimeout(() => checkSimulationResult(response.job_id), 3000);
     } catch (error) {
@@ -320,6 +327,15 @@ function Dashboard({ theme, toggleTheme }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Regular run simulation function
+  const runSimulation = async () => {
+    if (!currentCircuitId) {
+      setShowSavePrompt(true);
+      return;
+    }
+    runSimulationWithId(currentCircuitId);
   };
 
   const checkSimulationResult = async (jobId) => {

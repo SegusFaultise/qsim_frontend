@@ -1,4 +1,3 @@
-// Toolbar.jsx
 import React from "react";
 import { DraggableGate } from "./GateComponents";
 
@@ -23,9 +22,9 @@ function Toolbar({ onNewCircuit, onOpenBrowser }) {
   return (
     <aside className="sidebar">
       <div className="sidebar__header">
-        <i className="sidebar__logo">
-          <img src="/qism.svg" alt="Bootstrap" />
-        </i>
+        <div className="sidebar__logo">
+          <img src="/qism.svg" alt="Qism Logo" className="sidebar__logo-img" />
+        </div>
         <span className="sidebar__title">qism</span>
       </div>
       <div className="sidebar__content">
@@ -47,7 +46,6 @@ function Toolbar({ onNewCircuit, onOpenBrowser }) {
             >
               <i className="bi bi-folder2-open"></i> Open Circuit
             </button>
-            {/* Save button removed from here */}
           </div>
         </div>
       </div>
