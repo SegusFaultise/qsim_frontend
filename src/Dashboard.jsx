@@ -18,6 +18,8 @@ import CircuitGrid from "./components/CircuitGrid";
 import { Gate } from "./components/GateComponents";
 import GateEditModal from "./components/GateEditModal";
 import BottomBar from "./components/BottomBar";
+import CircuitBrowserModal from "./components/CircuitBrowserModal"; // NEW IMPORT
+import SimulationStatus from "./components/SimulationStatus"; // NEW IMPORT
 
 const createEmptyCircuit = (qubits, steps) =>
   Array.from({ length: qubits }, () => Array(steps).fill(null));
@@ -48,6 +50,11 @@ function Dashboard({ theme, toggleTheme }) {
   const [editingGate, setEditingGate] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(null);
+
+  const [isBrowserModalOpen, setIsBrowserModalOpen] = useState(false);
+
+  const [simulationStatus, setSimulationStatus] = useState(null); // 'running', 'completed', 'error'
+  const [simulationJobId, setSimulationJobId] = useState(null);
 
   const handleTabClick = (tabName) => {
     setActiveTab((prevTab) => (prevTab === tabName ? null : tabName));
@@ -199,6 +206,8 @@ function Dashboard({ theme, toggleTheme }) {
     } finally {
       setIsLoading(false);
     }
+
+    setIsBrowserModalOpen(false); // NEW
   };
 
   const runSimulation = async () => {
@@ -208,11 +217,14 @@ function Dashboard({ theme, toggleTheme }) {
     }
     try {
       setIsLoading(true);
+      setSimulationStatus("running");
       setSimulationResult(null);
       const response = await simulationApi.startSimulation(currentCircuitId);
+      setSimulationJobId(response.job_id);
       setTimeout(() => checkSimulationResult(response.job_id), 3000);
     } catch (error) {
       console.error("Failed to start simulation:", error);
+      setSimulationStatus("error");
     } finally {
       setIsLoading(false);
     }
@@ -223,6 +235,8 @@ function Dashboard({ theme, toggleTheme }) {
       const result = await simulationApi.getSimulationResult(jobId);
       if (result.status === "completed") {
         setSimulationResult(result.results);
+        setSimulationStatus("completed");
+        setSimulationJobId(null);
       } else if (result.status === "pending" || result.status === "running") {
         setTimeout(() => checkSimulationResult(jobId), 2000);
       } else {
@@ -230,9 +244,10 @@ function Dashboard({ theme, toggleTheme }) {
       }
     } catch (error) {
       console.error("Failed to get simulation result:", error);
+      setSimulationStatus("error");
+      setSimulationJobId(null);
     }
   };
-
   const handleNewCircuit = () => {
     const defaultQubits = 3;
     const defaultSteps = 25;
@@ -487,12 +502,7 @@ function Dashboard({ theme, toggleTheme }) {
       onDragEnd={handleDragEnd}
       sensors={sensors}
     >
-      <div
-        className="app-layout"
-        onClick={() =>
-          menuState.show && setMenuState({ ...menuState, show: false })
-        }
-      >
+      <div className="app-layout">
         <div className="animated-background">
           <div className="stars"></div>
           <div className="stars2"></div>
@@ -500,12 +510,9 @@ function Dashboard({ theme, toggleTheme }) {
         </div>
 
         <Toolbar
-          userCircuits={userCircuits}
-          isLoading={isLoading}
-          currentCircuitId={currentCircuitId}
-          onLoadCircuit={loadCircuit}
           onSaveCircuit={saveCircuit}
           onNewCircuit={handleNewCircuit}
+          onOpenBrowser={() => setIsBrowserModalOpen(true)} // NEW prop
         />
 
         <div
@@ -516,6 +523,7 @@ function Dashboard({ theme, toggleTheme }) {
             numQubits={numQubits}
             isDragging={isDragging}
             isLoading={isLoading}
+            simulationStatus={simulationStatus} // Add this line
             currentCircuitId={currentCircuitId}
             onRemoveQubit={removeQubit}
             onAddQubit={addQubit}
@@ -565,6 +573,19 @@ function Dashboard({ theme, toggleTheme }) {
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleUpdateGateParameters}
       />
+
+      <CircuitBrowserModal
+        isOpen={isBrowserModalOpen}
+        onClose={() => setIsBrowserModalOpen(false)}
+        userCircuits={userCircuits}
+        isLoading={isLoading}
+        currentCircuitId={currentCircuitId}
+        onLoadCircuit={loadCircuit}
+      />
+
+      {simulationStatus && (
+        <SimulationStatus status={simulationStatus} result={simulationResult} />
+      )}
     </DndContext>
   );
 }

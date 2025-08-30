@@ -45,7 +45,7 @@
     --header-height: 60px;
     --sidebar-width: 240px;
     --bottom-bar-height-collapsed: 48px;
-    --bottom-bar-height-expanded: 350px;
+    --bottom-bar-height-expanded: 400px;
 
     /* --- Borders & Shadows --- */
     --border-radius-sm: 3px; /* MODIFIED: Subtle radius */
@@ -720,4 +720,471 @@ body {
 .recharts-custom-tooltip__intro {
     color: var(--text-secondary);
     margin: 0;
+}
+
+/* CircuitBrowserModal.css */
+.modal-backdrop-glass {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    opacity: 0;
+    animation: glassFadeIn 0.3s ease forwards;
+}
+
+@keyframes glassFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.glass-modal {
+    font-family: var(--font-family-sans);
+}
+
+.glass-modal-content {
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: var(--border-width) solid var(--border-color);
+    background: var(--bg-glass-primary);
+    backdrop-filter: blur(10px);
+    color: var(--text-primary);
+}
+
+.glass-modal-header {
+    border-bottom: var(--border-width) solid var(--border-color);
+    padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
+    background: var(--bg-glass-secondary);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.glass-modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.glass-modal-body {
+    padding: 0;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.glass-modal-footer {
+    border-top: var(--border-width) solid var(--border-color);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: var(--bg-glass-secondary);
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+}
+
+.glass-btn-close {
+    opacity: 0.7;
+    transition: opacity var(--transition-short);
+    filter: invert(0.7);
+}
+
+.glass-btn-close:hover {
+    opacity: 1;
+}
+
+.btn.glass-btn-close {
+    border: var(--border-width) solid var(--border-color);
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+.btn.glass-btn-close:hover {
+    background-color: var(--bg-glass-tertiary);
+    color: var(--text-primary);
+}
+
+.glass-list-group {
+    border-radius: 0;
+    border: none;
+}
+
+.glass-list-item {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border: none;
+    border-bottom: var(--border-width) solid var(--border-color);
+    transition: all var(--transition-short);
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.glass-list-item:last-child {
+    border-bottom: none;
+}
+
+.glass-list-item:hover {
+    background-color: var(--accent-primary-rgb);
+    transform: translateX(4px);
+}
+
+.glass-list-item.active {
+    background: rgba(var(--accent-primary-rgb), 0.15);
+    border-left: 4px solid var(--accent-primary);
+    color: var(--text-primary);
+}
+
+.glass-circuit-name {
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.glass-circuit-desc {
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px;
+}
+
+.glass-circuit-icon {
+    font-size: 1.25rem;
+    color: var(--accent-primary);
+}
+
+.glass-list-item.active .glass-circuit-icon {
+    color: var(--accent-primary);
+}
+
+.glass-active-badge {
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
+    font-weight: 500;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.glass-spinner {
+    color: var(--accent-primary);
+    width: 2rem;
+    height: 2rem;
+}
+
+.glass-empty-state {
+    color: var(--text-secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .glass-modal-content {
+        margin: var(--spacing-md);
+    }
+
+    .glass-list-item {
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+
+    .glass-circuit-desc {
+        max-width: 200px;
+    }
+
+    .glass-modal-header,
+    .glass-modal-footer {
+        padding: var(--spacing-lg);
+    }
+}
+
+/* Running animation styles */
+.running-button {
+    --color: var(--text-on-accent);
+    --background: var(--accent-primary);
+    --background-hover: rgba(var(--accent-primary-rgb), 0.9);
+    --background-active: rgba(var(--accent-primary-rgb), 0.8);
+    --background-active-hover: rgba(var(--accent-primary-rgb), 0.7);
+    --shadow: rgba(0, 9, 61, 0.2);
+    --padding-y: 12px;
+    --padding-x: 36px;
+    margin: 0;
+    padding: var(--padding-y) 0;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 24px;
+    line-height: 23px;
+    position: relative;
+    border: none;
+    overflow: hidden;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    transition:
+        box-shadow 0.3s,
+        transform 0.3s,
+        background 0.4s;
+    box-shadow: 0 var(--shadow-y, 4px) var(--shadow-blur, 12px) var(--shadow);
+    color: var(--color);
+    background: var(--b, var(--background));
+    transform: translateY(var(--y, 0));
+}
+
+.running-button span {
+    display: block;
+    transition: transform 0.4s ease;
+    transform: translateX(var(--x, 0));
+    padding: 0 var(--padding-x);
+}
+
+.running-button span.default {
+    --x: var(--default-x, 0);
+}
+
+.running-button span.active {
+    --x: var(--active-x, -100%);
+    margin-top: -23px;
+}
+
+.running-button .running {
+    --scale: 0.64;
+    --color: #fff;
+    position: absolute;
+    top: 13px;
+    right: 100%;
+    transition: transform 0.4s ease;
+    transform: translateX(var(--running-x, -8px)) scale(var(--scale));
+}
+
+.running-button:hover {
+    --b: var(--background-hover);
+    --y: -2px;
+    --shadow-y: 8px;
+    --shadow-blur: 16px;
+    --default-x: 4px;
+    --running-x: var(--padding-x);
+}
+
+.running-button:active {
+    --y: 1px;
+    --shadow-y: 4px;
+    --shadow-blur: 8px;
+}
+
+.running-button.active {
+    --b: var(--background-active);
+    --default-x: 100%;
+    --active-x: -12%;
+    --running-x: 108px;
+}
+
+.running-button.active:hover {
+    --b: var(--background-active-hover);
+}
+
+.running-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Running animation */
+.running {
+    --color: var(--text-on-accent);
+    --duration: 0.8s;
+    transform: scale(var(--scale, 1));
+}
+
+.running .outer {
+    animation: outer var(--duration) linear infinite;
+}
+
+.running .outer .body {
+    background: var(--color);
+    height: 15px;
+    width: 8px;
+    border-radius: 4px;
+    transform-origin: 4px 11px;
+    position: relative;
+    transform: rotate(32deg);
+    animation: body var(--duration) linear infinite;
+}
+
+.running .outer .body:before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    bottom: 16px;
+    left: 0;
+    position: absolute;
+    background: var(--color);
+}
+
+.running .outer .body .arm,
+.running .outer .body .arm:before,
+.running .outer .body .leg,
+.running .outer .body .leg:before {
+    content: "";
+    width: var(--w, 11px);
+    height: 4px;
+    top: var(--t, 0);
+    left: var(--l, 2px);
+    border-radius: 2px;
+    transform-origin: 2px 2px;
+    position: absolute;
+    background: var(--c, var(--color));
+    transform: rotate(var(--r, 0deg));
+    animation: var(--name, arm-leg) var(--duration) linear infinite;
+}
+
+.running .outer .body .arm:before {
+    --l: 7px;
+    --name: arm-b;
+}
+
+.running .outer .body .arm.front {
+    --r: 24deg;
+    --r-to: 164deg;
+}
+
+.running .outer .body .arm.front:before {
+    --r: -48deg;
+    --r-to: -36deg;
+}
+
+.running .outer .body .arm.behind {
+    --r: 164deg;
+    --r-to: 24deg;
+}
+
+.running .outer .body .arm.behind:before {
+    --r: -36deg;
+    --r-to: -48deg;
+}
+
+.running .outer .body .leg {
+    --w: 12px;
+    --t: 11px;
+}
+
+.running .outer .body .leg:before {
+    --t: 0;
+    --l: 8px;
+}
+
+.running .outer .body .leg.front {
+    --r: 10deg;
+    --r-to: 108deg;
+}
+
+.running .outer .body .leg.front:before {
+    --r: 18deg;
+    --r-to: 76deg;
+}
+
+.running .outer .body .leg.behind {
+    --r: 108deg;
+    --r-to: 10deg;
+    --c: none;
+}
+
+.running .outer .body .leg.behind:before {
+    --c: var(--color);
+    --r: 76deg;
+    --r-to: 18deg;
+}
+
+.running .outer .body .leg.behind:after {
+    content: "";
+    top: 0;
+    right: 0;
+    height: 4px;
+    width: 6px;
+    clip-path: polygon(2px 0, 6px 0, 6px 4px, 0 4px);
+    border-radius: 0 2px 2px 0;
+    position: absolute;
+    background: var(--color);
+}
+
+/* Animation keyframes */
+@keyframes outer {
+    50% {
+        transform: translateY(0);
+    }
+    25%,
+    75% {
+        transform: translateY(4px);
+    }
+}
+
+@keyframes body {
+    50% {
+        transform: rotate(16deg);
+    }
+    25%,
+    75% {
+        transform: rotate(24deg);
+    }
+}
+
+@keyframes arm-leg {
+    50% {
+        transform: rotate(var(--r-to));
+    }
+}
+
+@keyframes arm-b {
+    30%,
+    70% {
+        transform: rotate(var(--r-to));
+    }
+}
+
+/* Quantum spinner for when simulation is running */
+.quantum-spinner {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.quantum-spinner::before,
+.quantum-spinner::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--accent-primary);
+    animation: spin 1.5s linear infinite;
+}
+
+.quantum-spinner::before {
+    width: 100%;
+    height: 100%;
+    border-top-color: var(--accent-primary);
+    border-right-color: rgba(var(--accent-primary-rgb), 0.3);
+    border-bottom-color: rgba(var(--accent-primary-rgb), 0.3);
+    border-left-color: rgba(var(--accent-primary-rgb), 0.3);
+}
+
+.quantum-spinner::after {
+    top: 5px;
+    left: 5px;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+    border-top-color: var(--success-primary);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    animation: spin 1s linear infinite reverse;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

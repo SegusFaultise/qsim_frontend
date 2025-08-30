@@ -6,6 +6,7 @@ function TopBar({
   numQubits,
   isDragging,
   isLoading,
+  simulationStatus,
   currentCircuitId,
   onRemoveQubit,
   onAddQubit,
@@ -58,14 +59,28 @@ function TopBar({
           <i className="bi bi-trash"></i>
           <span className="d-none d-md-inline ms-2">Clear</span>
         </button>
+
+        {/* Running Button with Animation */}
         <button
-          className="btn btn-primary"
+          className={`running-button ${simulationStatus === "running" ? "active" : ""}`}
           onClick={onRunSimulation}
-          disabled={isLoading || !currentCircuitId}
+          disabled={
+            isLoading || simulationStatus === "running" || !currentCircuitId
+          }
         >
-          <i className="bi bi-play-circle"></i>
-          <span className="d-none d-md-inline ms-2">Run</span>
+          <span className="default">Run Simulation</span>
+          <div className="running">
+            <div className="outer">
+              <div className="body">
+                <div className="arm front"></div>
+                <div className="arm behind"></div>
+                <div className="leg front"></div>
+                <div className="leg behind"></div>
+              </div>
+            </div>
+          </div>
         </button>
+
         <button
           className="btn btn-outline-secondary"
           onClick={onLogout}

@@ -1,3 +1,4 @@
+// Toolbar.jsx
 import React from "react";
 import { DraggableGate } from "./GateComponents";
 
@@ -19,12 +20,10 @@ const AVAILABLE_GATES = [
 ];
 
 function Toolbar({
-  userCircuits,
-  isLoading,
-  currentCircuitId,
-  onLoadCircuit,
+  // Remove userCircuits, isLoading, currentCircuitId, onLoadCircuit props
   onSaveCircuit,
   onNewCircuit,
+  onOpenBrowser, // Add a new prop for opening the modal
 }) {
   return (
     <aside className="sidebar">
@@ -41,43 +40,19 @@ function Toolbar({
         </div>
         <div className="circuit-management mt-4">
           <h5 className="sidebar__section-title">My Circuits</h5>
-          {isLoading ? (
-            <div className="d-flex justify-content-center">
-              <div className="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          ) : (
-            <ul className="list-group">
-              {userCircuits.map((c) => (
-                <li
-                  key={c.id}
-                  className={`list-group-item list-group-item-action ${
-                    currentCircuitId === c.id ? "active" : ""
-                  }`}
-                  onClick={() => onLoadCircuit(c.id)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {c.name}
-                </li>
-              ))}
-            </ul>
-          )}
+          {/* Replace the circuit list with buttons */}
           <div className="d-grid gap-2 mt-3">
-            <button
-              className="btn btn-secondary btn-sm"
-              onClick={onNewCircuit}
-              disabled={isLoading}
-            >
+            <button className="btn btn-secondary btn-sm" onClick={onNewCircuit}>
               <i className="bi bi-file-earmark-plus"></i> New Circuit
             </button>
             <button
-              className="btn btn-primary btn-sm"
-              onClick={onSaveCircuit}
-              disabled={isLoading}
+              className="btn btn-secondary btn-sm"
+              onClick={onOpenBrowser} // New button to open the modal
             >
-              <i className="bi bi-save"></i>{" "}
-              {currentCircuitId ? "Save" : "Save As..."}
+              <i className="bi bi-folder2-open"></i> Open Circuit
+            </button>
+            <button className="btn btn-primary btn-sm" onClick={onSaveCircuit}>
+              <i className="bi bi-save"></i> {/* This logic remains the same */}
             </button>
           </div>
         </div>
